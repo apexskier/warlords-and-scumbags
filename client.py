@@ -1,7 +1,16 @@
 import socket, select, sys, re, cardgame, math
 
-
 BUFSIZ = 1024
+COLORS = {
+        'HEADER': '\033[95m',
+        'OKBLUE': '\033[94m',
+        'OKGREEN': '\033[92m',
+        'WARNING': '\033[93m',
+        'BROADCAST': '\033[37m',
+        'FAIL': '\033[91m',
+        'ENDC': '\033[0m',
+        'none': ''
+    }
 
 class Client(object):
     def __init__(self, name, stdscr, host = 'localhost', port = 36714, manual = False, text = False):
@@ -17,7 +26,11 @@ class Client(object):
         self.buff = ""
         self.recieving_msg = False
         self.hand = None
+        self.last_player = None
         # Initial prompt
+        self.last_play_cards = None
+        self.last_play_count = None
+        self.last_play_val = None
         self.prompt = ">>> "
         # Connect to server at port
         try:
@@ -49,19 +62,43 @@ class Client(object):
                     if i == 0:
                         data = sys.stdin.readline().strip()
                         if data:
-                            message_match = re.match('^c(?P<type>[a-zA-Z]{4})\|(?P<body>.+)$', data)
-                            if message_match:
-                                m_type = message_match.group('type')
-                                if m_type == "play":
-                                    self.cplay([int(card) for card in message_match.group('body').split(',') if card != 52])
-                                elif m_type == "chat":
-                                    self.cchat(message_match.group('body'))
-                                elif m_type == "hand":
-                                    self.shand(message_match.group('body'))
+                            if self.text_mode:
+                                message_match = re.match('^(?P<type>.+?) (?P<body>.*)$', data)
+                                if message_match:
+                                    m_type = message_match.group('type')
+                                    if m_type == "play":
+                                        cards = message_match.group('body').split()
+                                        play = []
+                                        for card in cards:
+                                            card = cardgame.makeCardVal(card)
+                                            if card != None:
+                                                play.append(card)
+                                        if play != None:
+                                            self.cplay(play)
+                                        else:
+                                            self.prnt(COLORS['WARNING'] + "Invalid play" + COLORS['ENDC'])
+                                            self.prnt("Play with the following:")
+                                            self.prnt("play [cards]")
+                                            self.prnt("Where cards are things like 3D qc.")
+                                            self.prnt("or \"pass\"")
+                                    elif m_type == "chat":
+                                        self.cchat(message_match.group('body'))
+                                elif data == "pass":
+                                    self.cplay([52])
+                            else:
+                                message_match = re.match('^c(?P<type>[a-zA-Z]{4})\|(?P<body>.+)$', data)
+                                if message_match:
+                                    m_type = message_match.group('type')
+                                    if m_type == "play":
+                                        self.cplay([int(card) for card in message_match.group('body').split(',') if card != 52])
+                                    elif m_type == "chat":
+                                        self.cchat(message_match.group('body'))
+                                    elif m_type == "hand":
+                                        self.shand(message_match.group('body'))
+                                    else:
+                                        self.send("[" + data + "]")
                                 else:
                                     self.send("[" + data + "]")
-                            else:
-                                self.send("[" + data + "]")
                     elif i == self.socket:
                         data = self.socket.recv(BUFSIZ)
                         if not data:
@@ -189,6 +226,7 @@ class Client(object):
     def stabl(self, body):
         body_match = re.match('^(?P<players>[apwdeAPWDE]\d:(?:[a-zA-Z]|_|\d| ){8}:\d\d,[apwdeAPWDE]\d:(?:[a-zA-Z]|_|\d| ){8}:\d\d,[apwdeAPWDE]\d:(?:[a-zA-Z]|_|\d| ){8}:\d\d,[apwdeAPWDE]\d:(?:[a-zA-Z]|_|\d| ){8}:\d\d,[apwdeAPWDE]\d:(?:[a-zA-Z]|_|\d| ){8}:\d\d,[apwdeAPWDE]\d:(?:[a-zA-Z]|_|\d| ){8}:\d\d,[apwdeAPWDE]\d:(?:[a-zA-Z]|_|\d| ){8}:\d\d)\|(?P<last_play>\d\d,\d\d,\d\d,\d\d)\|(?P<first_round>[0|1])$', body)
         if body_match:
+            msg = ""
             players_group = body_match.group('players').split(',')
             last_play = body_match.group('last_play').split(',')
             first_round = body_match.group('first_round')
@@ -196,11 +234,11 @@ class Client(object):
             players = []
             for player in players_group:
                 player_match = re.match(one_player_re, player)
-                if player_match and player_match.group('status') != 'e':
+                if player_match and player_match.group('status').lower() != 'e' and player_match.group('status').lower() != 'd':
                     players.append({
                         'name': player_match.group('name'),
                         'strikes': int(player_match.group('strikes')),
-                        'status': player_match.group('status'),
+                        'status': player_match.group('status').lower(),
                         'num_cards': int(player_match.group('num_cards'))
                     })
             me = next((player for player in players if self.name_ == player['name']), None)
@@ -208,7 +246,34 @@ class Client(object):
             last_play_count = len(last_play_cards)
             last_play_val = cardgame.cardVal(last_play_cards[0])
 
+            if first_round == "1" and self.text_mode:
+                msg = COLORS["OKGREEN"] + "A game has started." + COLORS["ENDC"]
+
+            if (me or not self.last_player['name'] == me['name']) and self.text_mode:
+                active_player = next((player for player in players if player['status'] == 'a'), None)
+                if self.last_player:
+                    iplayer = next((player for player in players if player['name'] == self.last_player['name']), None)
+                    if iplayer:
+                        i = players.index(iplayer)
+                        supposed_last_player = players[(i - 1) % len(players)]
+                        if last_play_val:
+                            if last_play_cards == self.last_play_cards:
+                                self.prnt(self.last_player['name'].strip() + " passed.")
+                            else:
+                                if active_player['name'] == supposed_last_player['name'] and not first_round == 1:
+                                    self.prnt(supposed_last_player['name'].strip() + " was skipped!")
+                                last_play_str = ', '.join([cardgame.cardStr(card) for card in last_play_cards])
+                                self.prnt(self.last_player['name'].strip() + " played " + last_play_str + ".")
+
+                self.last_player = active_player
+                if last_play_cards != self.last_play_cards:
+                    self.last_play_cards = last_play_cards
+                    self.last_play_count = last_play_count
+                    self.last_play_val = last_play_val
             if me:
+                if first_round == "1" and self.text_mode:
+                    msg += " Get ready to play!"
+                    self.prnt(msg)
                 if me['status'] == 'a':
                     if not self.text_mode:
                         self.prnt(self.hand)
@@ -219,7 +284,10 @@ class Client(object):
                         if last_play_str:
                             self.prnt("Beat: " + last_play_str)
                         else:
-                            self.prnt("Play any card")
+                            if int(first_round):
+                                self.prnt("Start with the 3 of Clubs")
+                            else:
+                                self.prnt("Play any card")
                     if not self.manual:
                         if int(first_round) == 1 and last_play_val == 0 and 0 in self.hand:
                             self.cplay([00])
@@ -240,6 +308,7 @@ class Client(object):
                     pass; # not my turn
             else:
                 pass; # not in current game
+
         else:
             pass;
             self.prnt("no body match")
@@ -257,22 +326,30 @@ class Client(object):
 
     def strik(self, body):
         error_match = re.match('^(?P<error>(?P<error_1>\d)(?P<error_2>\d))$', body)
+        self.prnt(body)
         if error_match:
             error_1 = error_match.group('error_1')
             if error_1 == '1':
                 self.chand()
-        self.prnt("Strike!")
+            self.prnt(COLORS['WARNING'] + "Strike!" + COLORS['ENDC'])
+            self.prnt(error_1 + error_match.group(error_2))
+        else:
+            self.prnt(COLORS['WARNING'] + "Strike!" + COLORS['ENDC'])
+
 
     def swapw(self, body):
-        pass;
         self.prnt("choose a card to swap:")
+        if not self.manual:
+            card = self.hand.pop(0)
+            self.send('[cswap|' + str(card).zfill(2) + ']')
 
     def swaps(self, body):
         pass;
 
     def cplay(self, cards):
         if self.hand:
-            self.prnt("playing: " + str(cards))
+            if not self.text_mode:
+                self.prnt("playing: " + str(cards))
             self.hand = [card for card in self.hand if card not in cards]
             msg = "[cplay|" + cardgame.makeCardList(cards) + "]"
             self.send(msg)

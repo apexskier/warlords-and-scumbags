@@ -12,6 +12,16 @@ MAXIMUM_PLAYERS = 7
 lobby = []
 players = []
 new_clients = []
+COLORS = {
+        'HEADER': '\033[95m',
+        'OKBLUE': '\033[94m',
+        'OKGREEN': '\033[92m',
+        'WARNING': '\033[93m',
+        'BROADCAST': '\033[37m',
+        'FAIL': '\033[91m',
+        'ENDC': '\033[0m',
+        'none': ''
+    }
 
 class Server(object):
     def __init__(self, play_timeout = 15, minimum_players = 3, lobby_timeout = 15, port = 36714, backlog = 5):
@@ -34,7 +44,7 @@ class Server(object):
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         self.socket.bind(("", port))
-        print "Listening on port", port, "..."
+        print COLORS['OKGREEN'] + "Listening on port", port, "...", COLORS['ENDC']
         self.socket.listen(backlog)
         # trap keyboard interupts
         signal.signal(signal.SIGINT, self.sighandler)
@@ -57,15 +67,15 @@ class Server(object):
             if not client:
                 client = self.getClientFromSocket(recipient)
             if client:
-                print ">>>", client.name_, msg
+                print COLORS['OKBLUE'] + '>>>', client.name_, msg, COLORS['ENDC']
             else:
-                print ">>>", msg
+                print '>>>', msg
             recipient.send(msg + '\n')
         except socket.error, e:
             pass;
 
     def sendAll(self, msg):
-        print "> >", msg
+        print COLORS['BROADCAST'] + "> >", msg, COLORS['ENDC']
         for o in self.outputs:
             o.send(msg)
 
@@ -109,16 +119,16 @@ class Server(object):
             try:
                 ready_in, ready_out, ready_exp = select.select(self.inputs, self.outputs, [])
             except select.error, e:
-                print "select error:", e
+                print COLORS['FAIL'] + "select error:", e, COLORS['ENDC']
                 break
             except socket.error, e:
-                print "socket error:", e
+                print COLORS['FAIL'] + "socket error:", e, COLORS['ENDC']
                 break
 
             for s in ready_in:
                 if s == self.socket: # new connection, unknown client
                     client_socket, address = self.socket.accept()
-                    print "||| got connection %d from %s" % (client_socket.fileno(), address)
+                    print COLORS['OKBLUE'] + "||| got connection %d from %s" % (client_socket.fileno(), address), COLORS['ENDC']
 
                     if len(lobby) < MAX_CLIENTS: # bring client in
                         client = Client(client_socket, address)
@@ -147,7 +157,7 @@ class Server(object):
                         if client:
                             data = client.recv(BUFSIZ)
                             if unknown_client:
-                                print data
+                                print COLORS['BROADCAST'] + data + COLORS['ENDC']
                             if not data:
                                 self.disconnectClient(client)
                             else:
@@ -178,16 +188,16 @@ class Server(object):
                                             else:
                                                 self.strik(client, 33)
                                         else:
-                                            print "invalid client"
+                                            print COLORS['WARNING'] + "invalid client", COLORS['ENDC']
                                             self.strik(client, 30)
                                     else:
-                                        print "no message match"
+                                        print COLORS['WARNING'] + "no message match", COLORS['ENDC']
                                         self.strik(client, 30)
                         else:
-                            print "unknown client messaging"
+                            print COLORS['WARNING'] + "unknown client messaging", COLORS['ENDC']
 
                     except socket.error, e:
-                        print "socket error", e
+                        print COLORS['FAIL'] + "socket error", e, COLORS['ENDC']
 
         for o in self.outputs:
             o.send("[strik|82|3]")
@@ -206,13 +216,12 @@ class Server(object):
         msg += "]"
         self.sendAll(msg)
 
-        if len(players) == 0 and len(lobby) >= self.minimum_players:
+        if len(players) == 0 and len(lobby) >= self.minimum_players and len:
             self.startTimeout('lobby', self.setUpGame)
 
     def stabl(self):
         if len([player for player in players if player.status != 'd' and player.status != 'e']) > 1 and\
                 len([player for player in players if player.status == 'a']):
-            self.cancelTimeout('play')
             msg = "[stabl|"
             msg_players = ['e0:        :00'] * 7
             # <status><strikes>:<name>:<num_cards>
@@ -226,6 +235,7 @@ class Server(object):
             self.startTimeout('play', self.playTimeoutAction)
             self.sendAll(msg)
         else:
+            print COLORS['WARNING'] + "stabl starting new game" + COLORS['ENDC']
             self.setUpGame()
 
     def shand(self, player):
@@ -269,7 +279,7 @@ class Server(object):
                 lobby.append(client)
                 self.slobb()
         else:
-            print "Invalid join request"
+            print COLORS['WARNING'] + "Invalid join request", COLORS['ENDC']
             self.strik(client, 30)
 
     def cchat(self, client, body):
@@ -309,7 +319,7 @@ class Server(object):
                                 else:
                                     self.nextTurn(passed=True)
                             elif play_val == 13:
-                                print "2 played"
+                                print COLORS['OKGREEN'] + "2 played", COLORS['ENDC']
                                 for p in players:
                                     if p.status == 'w':
                                         p.status = 'p'
@@ -345,7 +355,9 @@ class Server(object):
                 if card in player.hand:
                     player.hand.remove(card)
                     players[self.getLastPlayerIndex()].hand.append(card)
+                    print "Swapped {} with {}".format(card, self.scumbag_highcard)
                     self.swaps(card, self.scumbag_highcard)
+                    self.scumbag_highcard = None
                     self.shand(player) # send scumbag's hand
                     self.stabl()
                 else:
@@ -353,6 +365,7 @@ class Server(object):
             else:
                 self.strik(player, 30)
         else:
+            print "swap message from client before timer"
             self.strik(player, 15)
 
     """
@@ -361,7 +374,8 @@ class Server(object):
     def startTimeout(self, name, action):
         if not self.timeouts[name]['timer']:
             self.timeouts[name]['timer'] = Timer(self.timeouts[name]['time'], action)
-            print "Starting " + name + " timeout"
+            if not name == 'play':
+                print "Starting " + name + " timeout"
             self.timeouts[name]['timer'].start()
         else:
             self.cancelTimeout(name)
@@ -369,14 +383,16 @@ class Server(object):
 
     def cancelTimeout(self, name):
         if self.timeouts[name]['timer']:
-            print "Cancelling " + name + " timeout"
+            if not name == 'play':
+                print "Cancelling " + name + " timeout"
             self.timeouts[name]['timer'].cancel()
             self.timeouts[name]['timer'] = None
         else:
-            print "tried to cancel " + name + " timeout"
+            print COLORS['WARNING'] + "tried to cancel " + name + " timeout", COLORS['ENDC']
 
     def playTimeoutAction(self):
-        self.cancelTimeout('play')
+        print COLORS['WARNING'] + "play timeout", COLORS['ENDC']
+        self.timeouts['play']['timer'] = None
         active_player = next((player for player in players if player.status == 'a'), None)
         if active_player:
             self.strik(active_player, 20)
@@ -386,7 +402,6 @@ class Server(object):
     def sendResults(self):
         if players and players[0].social:
             self.schat("________", "RESULTS:")
-            players.sort(key = lambda player: player.social)
             for player in players:
                 pos = ""
                 if player.social == 1:
@@ -400,23 +415,25 @@ class Server(object):
 
     def setUpGame(self):
         global players, lobby
-        print "starting Game"
+        print COLORS['OKGREEN'] + "starting Game", COLORS['ENDC']
         self.last_play = [52]
-        self.starting_round = 1
+        if not len(players):
+            self.starting_round = 1
         players = [player for player in players if player.status != 'e' and player.status != 'd']
         for player in players: # set existing players social statuses
             player.social = player.social_next
             player.social_next = None
-        self.sendResults()
 
         for i in range(1, MAXIMUM_PLAYERS - len(players)): # get some new players from the lobby
             if len(lobby) > 0:
                 player = lobby.pop(0)
-                player.social = self.track_social
-                self.track_social += 1
+                if self.starting_round == 0:
+                    player.social = self.track_social
+                    self.track_social += 1
                 players.append(player)
 
         players.sort(key = lambda player: player.social)
+        self.sendResults()
 
         if len(players) >= self.minimum_players:
             self.slobb()
@@ -438,8 +455,6 @@ class Server(object):
 
         cards_per_player = 52 // num_players
         extra_cards = 52 % num_players
-
-        print cards_per_player, extra_cards
 
         scumbag_index = len(players) - 1
 
@@ -475,9 +490,9 @@ class Server(object):
         self.scumbag_highcard = max(card for card in players[self.getLastPlayerIndex()].hand)
         players[self.getLastPlayerIndex()].hand.remove(self.scumbag_highcard) # remove card from scumbag
         players[0].hand.append(self.scumbag_highcard) # give to warlord
-        self.swapw(self.scumbag_highcard)
         # start a timout for the warlord to respond
         self.startTimeout('swap', self.swapTimeoutAction)
+        self.swapw(self.scumbag_highcard)
 
     def swapTimeoutAction(self):
         self.cancelTimeout('swap')
@@ -500,25 +515,24 @@ class Server(object):
 
     def getNextPlayerIndex(self, index):
         index = (index + 1) % len(players)
-        if len([player for player in players if len(player.hand) != 0 and player.status != 'e' and player.status != 'd']) > 1:
+        if len([player for player in players if len(player.hand) and player.status != 'e' and player.status != 'd']) > 0: # this was 1
             if len(players[index].hand) == 0 or players[index].status == 'e' or players[index].status == 'd':
                 return self.getNextPlayerIndex(index)
             else:
                 return index
         else:
-            if players[index].status == 'd':
-                return self.getNextPlayerIndex(index)
-            else:
-                return index
+            print COLORS['WARNING'] + "players:", [player.name for player in players if len(player.hand) and player.status != 'e' and player.status != 'd']
+            return next((player for player in players if len(player.hand) and player.status != 'e' and player.status != 'd'), None)
 
     def nextTurn(self, passed=False, skipped=False, two=False):
         # get player who played last
         player = next((player for player in players if player.status == 'a'), None)
         if player:
             i = players.index(player)
-            if len(players[i].hand) and not players[i].social_next:     # if they're out of cards
+            orig_i = i
+            if not len(players[i].hand) and not players[i].social_next:     # if they're out of cards
                 players[i].social_next = self.track_social              # save their place
-                print players[i].name, "has position", players[i].social_next
+                print COLORS['OKBLUE'] + players[i].name, "has position", players[i].social_next, COLORS['ENDC']
                 self.track_social += 1
             if len([player for player in players if (player.status != 'e' and player.status != 'd' and len(player.hand) > 0)]) > 0: # if there are players left
                 players[i].status = 'a' if two and len(players[i].hand) else 'p' if passed else 'w' # mark them as waiting or passed
@@ -529,7 +543,7 @@ class Server(object):
                 i = self.getNextPlayerIndex(i)                      # get the next player
                 if not two:
                     if not len(players[i].hand):
-                        print "player has no hand and I'm setting him as active"
+                        print COLORS['WARNING'] + "player has no hand and I'm setting him as active", COLORS['ENDC']
                     players[i].status = 'a'                         # mark them as their turn
                 waiting_players = [player for player in players if player.status == 'w' and len(player.hand) > 0] # count the number of waiting players
                 if len(waiting_players) >= 1 and not two:           # if there still are waiting players continue game
@@ -538,13 +552,16 @@ class Server(object):
                     for player in players:                              # mark all passed as waiting
                         if player.status == 'p':
                             player.status = 'w'
+                    if two and not len(players[orig_i].hand):                # if player went out on two
+                        players[i].status = 'a'
                     self.last_play = [52]                               # clear last play
+                    print COLORS['OKBLUE'] + "new round" + COLORS['ENDC']
                     self.stabl()
             else:
-                print "end of game"
+                print COLORS['OKGREEN'] + "end of game" + COLORS['ENDC']
                 self.startTimeout('lobby', self.setUpGame)
         else:
-            print "No player!"
+            print COLORS['FAIL'] + "No player!", COLORS['ENDC']
 
 class Client(object):
     def __init__(self, socket, address):

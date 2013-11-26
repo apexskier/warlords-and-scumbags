@@ -1,6 +1,8 @@
 #!/usr/bin/python
 # coding=UTF-8
 
+import re
+
 # utility functions shared by client and server
 
 def beatPlay(cards):
@@ -70,3 +72,54 @@ def makeCardList(cards):
         i += 1
 
     return ','.join(toret)
+
+def makeCardVal(cardstr):
+    card_match = re.match('(?P<val>(?:[\daAqQkKjJ]|10))(?P<suit>[dDcChHsS])', cardstr)
+    if card_match:
+        card = None
+
+        val = card_match.group('val').lower()
+        if val == '2':
+            card = 48
+        elif val == 'a':
+            card = 44
+        elif val == 'k':
+            card = 40
+        elif val == 'q':
+            card = 36
+        elif val == 'j':
+            card = 32
+        elif val == '10':
+            card = 28
+        elif val == '9':
+            card = 24
+        elif val == '8':
+            card = 20
+        elif val == '7':
+            card = 16
+        elif val == '6':
+            card = 12
+        elif val == '5':
+            card = 8
+        elif val == '4':
+            card = 4
+        elif val == '3':
+            card = 0
+        else:
+            return None
+
+        suit = card_match.group('suit').lower()
+        if suit == 'c':
+            card += 0
+        elif suit == 'd':
+            card += 1
+        elif suit == 'h':
+            card += 2
+        elif suit == 's':
+            card += 3
+        else:
+            return None
+
+        return card
+    else:
+        return None
