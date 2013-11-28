@@ -26,12 +26,10 @@ class Client(object):
         self.buff = ""
         self.recieving_msg = False
         self.hand = None
-        self.last_player = None
-        # Initial prompt
+        self.last_players = None
         self.last_play_cards = None
         self.last_play_count = None
         self.last_play_val = None
-        self.prompt = ">>> "
         # Connect to server at port
         try:
             self.socket_error = False
@@ -68,12 +66,14 @@ class Client(object):
                                     m_type = message_match.group('type')
                                     if m_type == "play":
                                         cards = message_match.group('body').split()
+                                        self.prnt(message_match.group('body'))
                                         play = []
                                         for card in cards:
                                             card = cardgame.makeCardVal(card)
                                             if card != None:
                                                 play.append(card)
                                         if play != None:
+                                            print play
                                             self.cplay(play)
                                         else:
                                             self.prnt(COLORS['WARNING'] + "Invalid play" + COLORS['ENDC'])
@@ -83,6 +83,13 @@ class Client(object):
                                             self.prnt("or \"pass\"")
                                     elif m_type == "chat":
                                         self.cchat(message_match.group('body'))
+                                    elif m_type == "swap":
+                                        card = message_match.group('body').split()
+                                        card = cardgame.makeCardVal(card)
+                                        if card != None:
+                                            self.send('[cswap|' + str(card).zfill(2) + ']')
+                                        else:
+                                            self.prnt(COLORS['WARNING'] + "Not a valid swap: use \"swap [card]\"" + COLORS['ENDC'])
                                 elif data == "pass":
                                     self.cplay([52])
                             else:
@@ -183,8 +190,8 @@ class Client(object):
             self.send("[cchat|" + message.ljust(63) + "]")
 
     def send(self, msg):
-        if not self.text_mode:
-            self.prnt(msg)
+        # if not self.text_mode:
+        self.prnt(msg)
         self.socket.send(msg)
 
     def sjoin(self, body):
@@ -236,12 +243,12 @@ class Client(object):
                 player_match = re.match(one_player_re, player)
                 if player_match and player_match.group('status').lower() != 'e' and player_match.group('status').lower() != 'd':
                     players.append({
-                        'name': player_match.group('name'),
+                        'name': player_match.group('name').strip(),
                         'strikes': int(player_match.group('strikes')),
                         'status': player_match.group('status').lower(),
                         'num_cards': int(player_match.group('num_cards'))
                     })
-            me = next((player for player in players if self.name_ == player['name']), None)
+            me = next((player for player in players if self.name == player['name']), None)
             last_play_cards = [int(card) for card in last_play if card != '52'] or [52]
             last_play_count = len(last_play_cards)
             last_play_val = cardgame.cardVal(last_play_cards[0])
@@ -249,13 +256,56 @@ class Client(object):
             if first_round == "1" and self.text_mode:
                 msg = COLORS["OKGREEN"] + "A game has started." + COLORS["ENDC"]
 
-            if (me or not self.last_player['name'] == me['name']) and self.text_mode:
+
+            if self.text_mode:
+                active_player = next((player for player in players if player['status'] == 'a'), None)
+                if active_player:
+                    if first_round == 1:
+                        self.prnt(active_player['name'] + " is starting.")
+                    elif self.last_players:
+                        last_player = players[(players.index(active_player) - 1) % len(players)]
+                        last_player_last_turn = next(player for player in self.last_players if player['name'] == last_player['name']) # should never be none
+                        last_play_str = ', '.join([cardgame.cardStr(card) for card in last_play_cards])
+                        if last_player['status'] == 'w':
+                            if last_player_last_turn['status'] == 'a':
+                                if last_player['num_cards'] == 0:
+                                    if last_play_val:
+                                        self.prnt(last_player['name'] + " went out with " + last_play_str + ".")
+                                    else:
+                                        self.prnt(last_player['name'] + " went out and started a new round.")
+                                elif len([player for player in self.last_players if player['status'] == 'w' or player['status'] == 'a']) == 1:
+                                    self.prnt(last_player['name'] + " passed. New round.")
+                                elif last_play_val:
+                                    self.prnt(last_player['name'] + " played " + last_play_str + ".")
+                                else:
+                                    self.prnt(last_player['name'] + " passed.")
+                            elif last_player_last_turn['status'] == 'w':
+                                last_active_player = next(player for player in self.last_players if player['status'] == 'a')
+                                self.prnt(last_player['name'] + " got skipped. New round.")
+                            elif last_player_last_turn['status'] == 'p':
+                                self.prnt(active_player['name'] + " is starting.")
+                        elif last_player['status'] == 'p':
+                            if last_player_last_turn['status'] == 'a':
+                                self.prnt(last_player['name'] + " passed.")
+                            else:
+                                prev_player = players[(players.index(last_player) - 1) % len(players)]
+                                self.prnt(prev_player['name'] + " played " + last_play_str + ".")
+                                self.prnt(last_player['name'] + " was skipped.")
+
+                self.last_players = players
+                self.last_play_cards = last_play_cards
+                self.last_play_count = last_play_count
+                self.last_play_val = last_play_val
+
+
+            if False and (me or not self.last_player['name'] == me['name']) and self.text_mode:
                 active_player = next((player for player in players if player['status'] == 'a'), None)
                 if self.last_player:
                     iplayer = next((player for player in players if player['name'] == self.last_player['name']), None)
                     if iplayer:
                         i = players.index(iplayer)
                         supposed_last_player = players[(i - 1) % len(players)]
+                        print supposed_last_player["name"] + active_player["name"] + self.last_player["name"]
                         if last_play_val:
                             if last_play_cards == self.last_play_cards:
                                 self.prnt(self.last_player['name'].strip() + " passed.")
@@ -336,20 +386,24 @@ class Client(object):
         else:
             self.prnt(COLORS['WARNING'] + "Strike!" + COLORS['ENDC'])
 
-
     def swapw(self, body):
-        self.prnt("choose a card to swap:")
+        if self.text_mode:
+            card = str(cardgame.cardStr(body))
+            if card:
+                self.prnt("You're getting " + card + " from the scumbag.")
+            self.prnt("Choose a card to give to them " + COLORS['BROADCAST'] + "(swap [card])" + COLORS['ENDC'] + ":")
         if not self.manual:
             card = self.hand.pop(0)
             self.send('[cswap|' + str(card).zfill(2) + ']')
 
     def swaps(self, body):
-        pass;
+        if self.text_mode:
+            cards = body.split('|')
+            if len(cards) == 2:
+                self.prnt("You lost the " + str(cardgame.cardStr(cards[0])) + " to the Warlord and got the " + str(cardgame.cardStr(cards[1])) + ".")
 
     def cplay(self, cards):
         if self.hand:
-            if not self.text_mode:
-                self.prnt("playing: " + str(cards))
             self.hand = [card for card in self.hand if card not in cards]
             msg = "[cplay|" + cardgame.makeCardList(cards) + "]"
             self.send(msg)
