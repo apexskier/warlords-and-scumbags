@@ -48,6 +48,8 @@ class Client(object):
             self.socket.close()
 
     def prnt(self, text):
+        if self.text_mode:
+            text = text.encode('utf8')
         print text
 
     def playGame(self):
@@ -66,14 +68,12 @@ class Client(object):
                                     m_type = message_match.group('type')
                                     if m_type == "play":
                                         cards = message_match.group('body').split()
-                                        self.prnt(message_match.group('body'))
                                         play = []
                                         for card in cards:
                                             card = cardgame.makeCardVal(card)
                                             if card != None:
                                                 play.append(card)
                                         if play != None:
-                                            print play
                                             self.cplay(play)
                                         else:
                                             self.prnt(COLORS['WARNING'] + "Invalid play" + COLORS['ENDC'])
@@ -107,40 +107,44 @@ class Client(object):
                                 else:
                                     self.send("[" + data + "]")
                     elif i == self.socket:
-                        data = self.socket.recv(BUFSIZ)
-                        if not data:
-                            self.prnt(data)
-                            self.prnt("Recieved nothing from the server")
-                            self.flag = True
-                        else:
-                            input_got = self.processInput(data)
-                            messages = input_got[0]
-                            errors = input_got[1]
-                            for message in messages:
-                                message_match = re.match('\[s(?P<type>[a-zA-Z]{4})\|(?P<body>.+)\]', message)
-                                if message_match:
-                                    m_type = message_match.group('type')
-                                    if not self.text_mode:
-                                        self.prnt(message)
-                                    if m_type == "tabl":
-                                        self.stabl(message_match.group('body'))
-                                    elif m_type == "join":
-                                        self.sjoin(message_match.group('body'))
-                                    elif m_type == "lobb":
-                                        self.slobb(message_match.group('body'))
-                                    elif m_type == "hand":
-                                        self.shand(message_match.group('body'))
-                                    elif m_type == "trik":
-                                        self.strik(message_match.group('body'))
-                                    elif m_type == "wapw":
-                                        self.swapw(message_match.group('body'))
-                                    elif m_type == "waps":
-                                        self.swaps(message_match.group('body'))
-                                    elif m_type == "chat":
-                                        self.schat(message_match.group('body'))
-                                    else:
+                        try:
+                            data = self.socket.recv(BUFSIZ)
+                            if not data:
+                                self.prnt(data)
+                                self.prnt("Recieved nothing from the server")
+                                self.flag = True
+                            else:
+                                input_got = self.processInput(data)
+                                messages = input_got[0]
+                                errors = input_got[1]
+                                for message in messages:
+                                    message_match = re.match('\[s(?P<type>[a-zA-Z]{4})\|(?P<body>.+)\]', message)
+                                    if message_match:
+                                        m_type = message_match.group('type')
                                         if not self.text_mode:
-                                            self.prnt("unknown message from server")
+                                            self.prnt(message)
+                                        if m_type == "tabl":
+                                            self.stabl(message_match.group('body'))
+                                        elif m_type == "join":
+                                            self.sjoin(message_match.group('body'))
+                                        elif m_type == "lobb":
+                                            self.slobb(message_match.group('body'))
+                                        elif m_type == "hand":
+                                            self.shand(message_match.group('body'))
+                                        elif m_type == "trik":
+                                            self.strik(message_match.group('body'))
+                                        elif m_type == "wapw":
+                                            self.swapw(message_match.group('body'))
+                                        elif m_type == "waps":
+                                            self.swaps(message_match.group('body'))
+                                        elif m_type == "chat":
+                                            self.schat(message_match.group('body'))
+                                        else:
+                                            if not self.text_mode:
+                                                self.prnt("unknown message from server")
+                        except socket.error, e:
+                            self.prnt("Socket error: ")
+                            self.prnt(e)
 
             except KeyboardInterrupt:
                 self.socket.close()
@@ -190,8 +194,8 @@ class Client(object):
             self.send("[cchat|" + message.ljust(63) + "]")
 
     def send(self, msg):
-        # if not self.text_mode:
-        self.prnt(msg)
+        if not self.text_mode:
+            self.prnt(msg)
         self.socket.send(msg)
 
     def sjoin(self, body):
@@ -297,29 +301,6 @@ class Client(object):
                 self.last_play_count = last_play_count
                 self.last_play_val = last_play_val
 
-
-            if False and (me or not self.last_player['name'] == me['name']) and self.text_mode:
-                active_player = next((player for player in players if player['status'] == 'a'), None)
-                if self.last_player:
-                    iplayer = next((player for player in players if player['name'] == self.last_player['name']), None)
-                    if iplayer:
-                        i = players.index(iplayer)
-                        supposed_last_player = players[(i - 1) % len(players)]
-                        print supposed_last_player["name"] + active_player["name"] + self.last_player["name"]
-                        if last_play_val:
-                            if last_play_cards == self.last_play_cards:
-                                self.prnt(self.last_player['name'].strip() + " passed.")
-                            else:
-                                if active_player['name'] == supposed_last_player['name'] and not first_round == 1:
-                                    self.prnt(supposed_last_player['name'].strip() + " was skipped!")
-                                last_play_str = ', '.join([cardgame.cardStr(card) for card in last_play_cards])
-                                self.prnt(self.last_player['name'].strip() + " played " + last_play_str + ".")
-
-                self.last_player = active_player
-                if last_play_cards != self.last_play_cards:
-                    self.last_play_cards = last_play_cards
-                    self.last_play_count = last_play_count
-                    self.last_play_val = last_play_val
             if me:
                 if first_round == "1" and self.text_mode:
                     msg += " Get ready to play!"
@@ -361,7 +342,7 @@ class Client(object):
 
         else:
             pass;
-            self.prnt("no body match")
+            self.prnt(COLORS['WARNING'] + "no body match" + COLORS['ENDC'])
 
     def schat(self, body):
         chat_match = re.match('^(?P<from>(?:[a-zA-Z]|_|\d| ){8})\|(?P<msg>(.*))$', body)
@@ -375,22 +356,68 @@ class Client(object):
         hand_str = ', '.join([cardgame.cardStr(card) for card in self.hand])
 
     def strik(self, body):
-        error_match = re.match('^(?P<error>(?P<error_1>\d)(?P<error_2>\d))$', body)
-        self.prnt(body)
+        error_match = re.match('^(?P<error>(?P<error_1>\d)(?P<error_2>\d))\|(?P<count>\d)$', body)
         if error_match:
             error_1 = error_match.group('error_1')
-            if error_1 == '1':
+            count = error_match.group('count')
+            error = error_match.group('error')
+            if error_1 == '1' or error == "70":
                 self.chand()
-            self.prnt(COLORS['WARNING'] + "Strike!" + COLORS['ENDC'])
-            self.prnt(error_1 + error_match.group(error_2))
+            error_msg = "Unknown error."
+            if error == "10":
+                error_msg = "Illegal play."
+            elif error == "11":
+                error_msg = "Cards must have matching face values."
+            elif error == "12":
+                error_msg = "Cards face value much match or beat previous play."
+            elif error == "13":
+                error_msg = "Amount of cards must match or beat previous play."
+            elif error == "14":
+                error_msg = "You don't have that card in your hand."
+            elif error == "15":
+                error_msg = "It's not your turn."
+            elif error == "16":
+                error_msg = "You have to play your three of clubs when starting the game."
+            elif error == "17":
+                error_msg = "You sent duplicate cards."
+            elif error == "18":
+                error_msg = "You can't pass when starting."
+            elif error == "20":
+                error_msg = "You're taking too long. Play!"
+            elif error == "30":
+                error_msg = "That message was bad."
+            elif error == "31":
+                error_msg = "You can't play when you're in the lobby."
+            elif error == "32":
+                error_msg = "That message is too long."
+            elif error == "33":
+                error_msg = "That type of message is not known."
+            elif error == "34":
+                error_msg = "I know what type of message that is, but it's content is messed up."
+            elif error == "60":
+                error_msg = "You're flooding the chat."
+            elif error == "70":
+                error_msg = "That swap's not valid."
+            elif error == "71":
+                error_msg = "You're not able to swap."
+            elif error == "72":
+                error_msg = "It's not your turn to swap."
+            elif error == "80":
+                error_msg = "You can't connect."
+            elif error == "81":
+                error_msg = "There are too many people connected already."
+
+            self.prnt(COLORS['WARNING'] + "Strike " + count + "! " + error_msg + COLORS['ENDC'])
         else:
-            self.prnt(COLORS['WARNING'] + "Strike!" + COLORS['ENDC'])
+            self.prnt(COLORS['WARNING'] + "Strike" +  + "! You've done something wrong." + COLORS['ENDC'])
 
     def swapw(self, body):
         if self.text_mode:
-            card = str(cardgame.cardStr(body))
+            card = cardgame.cardStr(body)
             if card:
                 self.prnt("You're getting " + card + " from the scumbag.")
+            hand_str = ', '.join([cardgame.cardStr(card) for card in self.hand])
+            self.prnt("Your hand: " + hand_str)
             self.prnt("Choose a card to give to them " + COLORS['BROADCAST'] + "(swap [card])" + COLORS['ENDC'] + ":")
         if not self.manual:
             card = self.hand.pop(0)
