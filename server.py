@@ -1,4 +1,4 @@
-import socket, select, signal, sys, re, math, random, cardgame
+import socket, select, signal, sys, re, math, random, cardgame, string
 from threading import Timer
 
 print "starting up"
@@ -574,7 +574,7 @@ class Client(object):
 
     def join(self, name):
         self.valid = True
-        name = self.name_mangle(name)
+        name = self.name_mangle(name.strip())
         self.name_ = name.ljust(8)
         self.name = name
         self.social = None
@@ -588,15 +588,29 @@ class Client(object):
         return self.strikes
 
     def name_mangle(self, name):
-        if name.strip() == "":
-            name = "bob"
+        if name == "":
+            name = "anon"
         names = [player.name for player in players] + [client.name for client in lobby]
         if name in names:
             # mangle name
-            temp_name = name.replace('_', ' ').strip()
-            temp_name = temp_name[0:len(temp_name) - 1] + '_'
-            name = temp_name.replace(' ', '_')
-            return self.name_mangle(name)
+            scores = 0
+            temp_name = name
+            while len(temp_name) > 1 and temp_name[-1] == '_':
+                scores += 1
+                temp_name = temp_name[0:-1]
+            if len(temp_name) == 1:
+                chars = string.letters
+                if len(name) > 7:
+                    name = name[0:-2] + random.choice(chars)
+                else:
+                    name = name[0:-1] + random.choice(chars)
+                return self.name_mangle(name)
+            else:
+                last = len(name)
+                if last > 7:
+                    last = 7 - scores
+                name = name[0:last] + '_'
+                return self.name_mangle(name)
         else:
             return name
 

@@ -1,6 +1,636 @@
 starting up
 [92mListening on port 36714 ... [0m
+[94m||| got connection 4 from ('127.0.0.1', 48419) [0m
+[37m[cjoin|cameron ][0m
+<<< [cjoin|cameron ]
+>>> [sjoin|cameron ]
+[37m> > [slobb|01|cameron ] [0m
+[94m||| got connection 5 from ('127.0.0.1', 48420) [0m
+[37m[cjoin|ryan    ][0m
+<<< [cjoin|ryan    ]
+>>> [sjoin|ryan    ]
+[37m> > [slobb|02|cameron ,ryan    ] [0m
+[94m||| got connection 6 from ('127.0.0.1', 48421) [0m
+[37m[cjoin|brad    ][0m
+<<< [cjoin|brad    ]
+>>> [sjoin|brad    ]
+[37m> > [slobb|03|cameron ,ryan    ,brad    ] [0m
+Starting lobby timeout
+[92mstarting Game [0m
+[37m> > [slobb|00] [0m
+[94m>>> cameron  [shand|22,15,18,05,00,51,06,25,49,13,42,12,24,07,34,44,16,35] [0m
+[94m>>> ryan     [shand|47,02,41,40,01,39,21,11,37,04,32,29,17,27,50,31,43,52] [0m
+[94m>>> brad     [shand|28,09,23,45,03,48,08,26,46,10,30,14,38,19,33,36,20,52] [0m
+[37m> > [stabl|a0:cameron :18,w0:ryan    :17,w0:brad    :17,e0:        :00,e0:        :00,e0:        :00,e0:        :00|52,52,52,52|1] [0m
+[37m> > [stabl|d0:cameron :00,a0:ryan    :17,w0:brad    :17,e0:        :00,e0:        :00,e0:        :00,e0:        :00|52,52,52,52|0] [0m
+<<< ryan    : [cplay|01,02,52,52]
+[37m> > [stabl|d0:cameron :00,w0:ryan    :15,a0:brad    :17,e0:        :00,e0:        :00,e0:        :00,e0:        :00|01,02,52,52|0] [0m
+<<< brad    : [cplay|52,52,52,52]
+[94mnew round[0m
+[37m> > [stabl|d0:cameron :00,a0:ryan    :15,w0:brad    :17,e0:        :00,e0:        :00,e0:        :00,e0:        :00|52,52,52,52|0] [0m
+<<< ryan    : [cplay|04,52,52,52]
+[37m> > [stabl|d0:cameron :00,w0:ryan    :14,a0:brad    :17,e0:        :00,e0:        :00,e0:        :00,e0:        :00|04,52,52,52|0] [0m
+<<< brad    : [cplay|08,09,10,52]
+[37m> > [stabl|d0:cameron :00,a0:ryan    :14,w0:brad    :14,e0:        :00,e0:        :00,e0:        :00,e0:        :00|08,09,10,52|0] [0m
+<<< ryan    : [cplay|52,52,52,52]
+[94mnew round[0m
+[37m> > [stabl|d0:cameron :00,w0:ryan    :14,a0:brad    :14,e0:        :00,e0:        :00,e0:        :00,e0:        :00|52,52,52,52|0] [0m
+<<< brad    : [cplay|03,52,52,52]
+[37m> > [stabl|d0:cameron :00,a0:ryan    :14,w0:brad    :13,e0:        :00,e0:        :00,e0:        :00,e0:        :00|03,52,52,52|0] [0m
+<<< ryan    : [cplay|11,52,52,52]
+[37m> > [stabl|d0:cameron :00,w0:ryan    :13,a0:brad    :13,e0:        :00,e0:        :00,e0:        :00,e0:        :00|11,52,52,52|0] [0m
+<<< brad    : [cplay|14,52,52,52]
+[37m> > [stabl|d0:cameron :00,a0:ryan    :13,w0:brad    :12,e0:        :00,e0:        :00,e0:        :00,e0:        :00|14,52,52,52|0] [0m
+<<< ryan    : [cplay|17,52,52,52]
+[37m> > [stabl|d0:cameron :00,w0:ryan    :12,a0:brad    :12,e0:        :00,e0:        :00,e0:        :00,e0:        :00|17,52,52,52|0] [0m
+<<< brad    : [cplay|19,52,52,52]
+skipping ryan    
+[94mnew round[0m
+[37m> > [stabl|d0:cameron :00,w0:ryan    :12,a0:brad    :11,e0:        :00,e0:        :00,e0:        :00,e0:        :00|52,52,52,52|0] [0m
+<<< brad    : [cplay|20,23,52,52]
+[37m> > [stabl|d0:cameron :00,a0:ryan    :12,w0:brad    :09,e0:        :00,e0:        :00,e0:        :00,e0:        :00|20,23,52,52|0] [0m
+<<< ryan    : [cplay|52,52,52,52]
+[94mnew round[0m
+[37m> > [stabl|d0:cameron :00,w0:ryan    :12,a0:brad    :09,e0:        :00,e0:        :00,e0:        :00,e0:        :00|52,52,52,52|0] [0m
+<<< brad    : [cplay|26,52,52,52]
+[37m> > [stabl|d0:cameron :00,a0:ryan    :12,w0:brad    :08,e0:        :00,e0:        :00,e0:        :00,e0:        :00|26,52,52,52|0] [0m
+<<< ryan    : [cplay|27,52,52,52]
+skipping brad    
+[94mnew round[0m
+[37m> > [stabl|d0:cameron :00,a0:ryan    :11,w0:brad    :08,e0:        :00,e0:        :00,e0:        :00,e0:        :00|52,52,52,52|0] [0m
+<<< ryan    : [cplay|21,52,52,52]
+[37m> > [stabl|d0:cameron :00,w0:ryan    :10,a0:brad    :08,e0:        :00,e0:        :00,e0:        :00,e0:        :00|21,52,52,52|0] [0m
+<<< brad    : [cplay|28,30,52,52]
+[37m> > [stabl|d0:cameron :00,a0:ryan    :10,w0:brad    :06,e0:        :00,e0:        :00,e0:        :00,e0:        :00|28,30,52,52|0] [0m
+<<< ryan    : [cplay|29,31,52,52]
+skipping brad    
+[94mnew round[0m
+[37m> > [stabl|d0:cameron :00,a0:ryan    :08,w0:brad    :06,e0:        :00,e0:        :00,e0:        :00,e0:        :00|52,52,52,52|0] [0m
+<<< ryan    : [cplay|32,52,52,52]
+[37m> > [stabl|d0:cameron :00,w0:ryan    :07,a0:brad    :06,e0:        :00,e0:        :00,e0:        :00,e0:        :00|32,52,52,52|0] [0m
+<<< brad    : [cplay|33,52,52,52]
+skipping ryan    
+[94mnew round[0m
+[37m> > [stabl|d0:cameron :00,w0:ryan    :07,a0:brad    :05,e0:        :00,e0:        :00,e0:        :00,e0:        :00|52,52,52,52|0] [0m
+<<< brad    : [cplay|36,38,52,52]
+[37m> > [stabl|d0:cameron :00,a0:ryan    :07,w0:brad    :03,e0:        :00,e0:        :00,e0:        :00,e0:        :00|36,38,52,52|0] [0m
+<<< ryan    : [cplay|37,39,52,52]
+skipping brad    
+[94mnew round[0m
+[37m> > [stabl|d0:cameron :00,a0:ryan    :05,w0:brad    :03,e0:        :00,e0:        :00,e0:        :00,e0:        :00|52,52,52,52|0] [0m
+<<< ryan    : [cplay|40,41,43,52]
+[37m> > [stabl|d0:cameron :00,w0:ryan    :02,a0:brad    :03,e0:        :00,e0:        :00,e0:        :00,e0:        :00|40,41,43,52|0] [0m
+<<< brad    : [cplay|52,52,52,52]
+[94mnew round[0m
+[37m> > [stabl|d0:cameron :00,a0:ryan    :02,w0:brad    :03,e0:        :00,e0:        :00,e0:        :00,e0:        :00|52,52,52,52|0] [0m
+<<< ryan    : [cplay|47,52,52,52]
+[37m> > [stabl|d0:cameron :00,w0:ryan    :01,a0:brad    :03,e0:        :00,e0:        :00,e0:        :00,e0:        :00|47,52,52,52|0] [0m
+<<< brad    : [cplay|45,46,52,52]
+[37m> > [stabl|d0:cameron :00,a0:ryan    :01,w0:brad    :01,e0:        :00,e0:        :00,e0:        :00,e0:        :00|45,46,52,52|0] [0m
+<<< ryan    : [cplay|52,52,52,52]
+[94mnew round[0m
+[37m> > [stabl|d0:cameron :00,w0:ryan    :01,a0:brad    :01,e0:        :00,e0:        :00,e0:        :00,e0:        :00|52,52,52,52|0] [0m
+<<< brad    : [cplay|48,52,52,52]
+[92m2 played [0m
+[94mbrad     has position 1 [0m
+[94mnew round[0m
+[37m> > [stabl|d0:cameron :00,a0:ryan    :01,w0:brad    :00,e0:        :00,e0:        :00,e0:        :00,e0:        :00|52,52,52,52|0] [0m
+<<< ryan    : [cplay|50,52,52,52]
+[92m2 played [0m
+[94mryan     has position 2 [0m
+[92mend of game[0m
+Cancelling lobby timeout
+Starting lobby timeout
+[92mstarting Game [0m
+[37m> > [schat|________|RESULTS                                                        ] [0m
+[37m> > [schat|________|brad is the Warlord                                            ] [0m
+[37m> > [schat|________|ryan is the Scumbag                                            ] [0m
+Not enough players, sending to lobby
+[37m> > [slobb|02|brad    ,ryan    ] [0m
+[94m||| got connection 4 from ('127.0.0.1', 48422) [0m
+[37m[cjoin|cameron ][0m
+<<< [cjoin|cameron ]
+>>> [sjoin|cameron ]
+[37m> > [slobb|03|brad    ,ryan    ,cameron ] [0m
+Cancelling lobby timeout
+Starting lobby timeout
+[92mstarting Game [0m
+[37m> > [slobb|00] [0m
+[94m>>> brad     [shand|07,10,20,16,48,47,09,46,12,41,13,26,37,39,11,25,02,50] [0m
+[94m>>> ryan     [shand|27,29,17,31,14,38,28,30,36,22,15,33,45,06,24,51,32,52] [0m
+[94m>>> cameron  [shand|49,01,08,42,18,43,23,40,04,35,21,05,19,44,34,03,00,52] [0m
+[37m> > [stabl|w0:brad    :18,w0:ryan    :17,a0:cameron :17,e0:        :00,e0:        :00,e0:        :00,e0:        :00|52,52,52,52|1] [0m
+[37m> > [stabl|a0:brad    :18,w0:ryan    :17,d0:cameron :00,e0:        :00,e0:        :00,e0:        :00,e0:        :00|52,52,52,52|0] [0m
+<<< brad    : [cplay|02,52,52,52]
+[37m> > [stabl|w0:brad    :17,a0:ryan    :17,d0:cameron :00,e0:        :00,e0:        :00,e0:        :00,e0:        :00|02,52,52,52|0] [0m
+<<< ryan    : [cplay|06,52,52,52]
+[37m> > [stabl|a0:brad    :17,w0:ryan    :16,d0:cameron :00,e0:        :00,e0:        :00,e0:        :00,e0:        :00|06,52,52,52|0] [0m
+<<< brad    : [cplay|07,52,52,52]
+skipping ryan    
+[94mnew round[0m
+[37m> > [stabl|a0:brad    :16,w0:ryan    :16,d0:cameron :00,e0:        :00,e0:        :00,e0:        :00,e0:        :00|52,52,52,52|0] [0m
+<<< brad    : [cplay|09,10,11,52]
+[37m> > [stabl|w0:brad    :13,a0:ryan    :16,d0:cameron :00,e0:        :00,e0:        :00,e0:        :00,e0:        :00|09,10,11,52|0] [0m
+<<< ryan    : [cplay|52,52,52,52]
+[94mnew round[0m
+[37m> > [stabl|a0:brad    :13,w0:ryan    :16,d0:cameron :00,e0:        :00,e0:        :00,e0:        :00,e0:        :00|52,52,52,52|0] [0m
+<<< brad    : [cplay|12,13,52,52]
+[37m> > [stabl|w0:brad    :11,a0:ryan    :16,d0:cameron :00,e0:        :00,e0:        :00,e0:        :00,e0:        :00|12,13,52,52|0] [0m
+<<< ryan    : [cplay|14,15,52,52]
+skipping brad    
+[94mnew round[0m
+[37m> > [stabl|w0:brad    :11,a0:ryan    :14,d0:cameron :00,e0:        :00,e0:        :00,e0:        :00,e0:        :00|52,52,52,52|0] [0m
+<<< ryan    : [cplay|17,52,52,52]
+[37m> > [stabl|a0:brad    :11,w0:ryan    :13,d0:cameron :00,e0:        :00,e0:        :00,e0:        :00,e0:        :00|17,52,52,52|0] [0m
+<<< brad    : [cplay|16,52,52,52]
+skipping ryan    
+[94mnew round[0m
+[37m> > [stabl|a0:brad    :10,w0:ryan    :13,d0:cameron :00,e0:        :00,e0:        :00,e0:        :00,e0:        :00|52,52,52,52|0] [0m
+<<< brad    : [cplay|20,52,52,52]
+[37m> > [stabl|w0:brad    :09,a0:ryan    :13,d0:cameron :00,e0:        :00,e0:        :00,e0:        :00,e0:        :00|20,52,52,52|0] [0m
+<<< ryan    : [cplay|22,52,52,52]
+skipping brad    
+[94mnew round[0m
+[37m> > [stabl|w0:brad    :09,a0:ryan    :12,d0:cameron :00,e0:        :00,e0:        :00,e0:        :00,e0:        :00|52,52,52,52|0] [0m
+<<< ryan    : [cplay|24,27,52,52]
+[37m> > [stabl|a0:brad    :09,w0:ryan    :10,d0:cameron :00,e0:        :00,e0:        :00,e0:        :00,e0:        :00|24,27,52,52|0] [0m
+<<< brad    : [cplay|25,26,52,52]
+skipping ryan    
+[94mnew round[0m
+[37m> > [stabl|a0:brad    :07,w0:ryan    :10,d0:cameron :00,e0:        :00,e0:        :00,e0:        :00,e0:        :00|52,52,52,52|0] [0m
+<<< brad    : [cplay|37,39,52,52]
+[37m> > [stabl|w0:brad    :05,a0:ryan    :10,d0:cameron :00,e0:        :00,e0:        :00,e0:        :00,e0:        :00|37,39,52,52|0] [0m
+<<< ryan    : [cplay|36,38,52,52]
+skipping brad    
+[94mnew round[0m
+[37m> > [stabl|w0:brad    :05,a0:ryan    :08,d0:cameron :00,e0:        :00,e0:        :00,e0:        :00,e0:        :00|52,52,52,52|0] [0m
+<<< ryan    : [cplay|28,29,30,31]
+[37m> > [stabl|a0:brad    :05,w0:ryan    :04,d0:cameron :00,e0:        :00,e0:        :00,e0:        :00,e0:        :00|28,29,30,31|0] [0m
+<<< brad    : [cplay|52,52,52,52]
+[94mnew round[0m
+[37m> > [stabl|w0:brad    :05,a0:ryan    :04,d0:cameron :00,e0:        :00,e0:        :00,e0:        :00,e0:        :00|52,52,52,52|0] [0m
+<<< ryan    : [cplay|32,33,52,52]
+[37m> > [stabl|a0:brad    :05,w0:ryan    :02,d0:cameron :00,e0:        :00,e0:        :00,e0:        :00,e0:        :00|32,33,52,52|0] [0m
+<<< brad    : [cplay|52,52,52,52]
+[94mnew round[0m
+[37m> > [stabl|w0:brad    :05,a0:ryan    :02,d0:cameron :00,e0:        :00,e0:        :00,e0:        :00,e0:        :00|52,52,52,52|0] [0m
+<<< ryan    : [cplay|45,52,52,52]
+[37m> > [stabl|a0:brad    :05,w0:ryan    :01,d0:cameron :00,e0:        :00,e0:        :00,e0:        :00,e0:        :00|45,52,52,52|0] [0m
+<<< brad    : [cplay|46,47,52,52]
+[37m> > [stabl|w0:brad    :03,a0:ryan    :01,d0:cameron :00,e0:        :00,e0:        :00,e0:        :00,e0:        :00|46,47,52,52|0] [0m
+<<< ryan    : [cplay|52,52,52,52]
+[94mnew round[0m
+[37m> > [stabl|a0:brad    :03,w0:ryan    :01,d0:cameron :00,e0:        :00,e0:        :00,e0:        :00,e0:        :00|52,52,52,52|0] [0m
+<<< brad    : [cplay|41,52,52,52]
+[37m> > [stabl|w0:brad    :02,a0:ryan    :01,d0:cameron :00,e0:        :00,e0:        :00,e0:        :00,e0:        :00|41,52,52,52|0] [0m
+<<< ryan    : [cplay|51,52,52,52]
+[92m2 played [0m
+[94mryan     has position 1 [0m
+[94mnew round[0m
+[37m> > [stabl|a0:brad    :02,w0:ryan    :00,d0:cameron :00,e0:        :00,e0:        :00,e0:        :00,e0:        :00|52,52,52,52|0] [0m
+<<< brad    : [cplay|48,50,52,52]
+[92m2 played [0m
+[94mbrad     has position 2 [0m
+[92mend of game[0m
+Cancelling lobby timeout
+Starting lobby timeout
+[92mstarting Game [0m
+[37m> > [schat|________|RESULTS                                                        ] [0m
+[37m> > [schat|________|ryan is the Warlord                                            ] [0m
+[37m> > [schat|________|brad is the Scumbag                                            ] [0m
+Not enough players, sending to lobby
+[37m> > [slobb|02|ryan    ,brad    ] [0m
+[94m||| got connection 4 from ('127.0.0.1', 48425) [0m
+[37m[cjoin|cameron ][0m
+<<< [cjoin|cameron ]
+>>> [sjoin|cameron ]
+[37m> > [slobb|03|ryan    ,brad    ,cameron ] [0m
+Cancelling lobby timeout
+Starting lobby timeout
+[92mstarting Game [0m
+[37m> > [slobb|00] [0m
+[94m>>> ryan     [shand|26,44,15,20,04,27,03,41,07,25,02,36,33,01,14,08,50,48] [0m
+[94m>>> brad     [shand|10,49,30,38,31,13,05,28,32,17,34,47,06,21,12,40,37,52] [0m
+[94m>>> cameron  [shand|18,51,43,24,22,39,19,00,35,09,45,46,29,16,23,42,11,52] [0m
+[37m> > [stabl|w0:ryan    :18,w0:brad    :17,a0:cameron :17,e0:        :00,e0:        :00,e0:        :00,e0:        :00|52,52,52,52|1] [0m
+[37m> > [stabl|a0:ryan    :18,w0:brad    :17,d0:cameron :00,e0:        :00,e0:        :00,e0:        :00,e0:        :00|52,52,52,52|0] [0m
+<<< ryan    : [cplay|01,02,03,52]
+[37m> > [stabl|w0:ryan    :15,a0:brad    :17,d0:cameron :00,e0:        :00,e0:        :00,e0:        :00,e0:        :00|01,02,03,52|0] [0m
+<<< brad    : [cplay|52,52,52,52]
+[94mnew round[0m
+[37m> > [stabl|a0:ryan    :15,w0:brad    :17,d0:cameron :00,e0:        :00,e0:        :00,e0:        :00,e0:        :00|52,52,52,52|0] [0m
+<<< ryan    : [cplay|04,07,52,52]
+[37m> > [stabl|w0:ryan    :13,a0:brad    :17,d0:cameron :00,e0:        :00,e0:        :00,e0:        :00,e0:        :00|04,07,52,52|0] [0m
+<<< brad    : [cplay|05,06,52,52]
+skipping ryan    
+[94mnew round[0m
+[37m> > [stabl|w0:ryan    :13,a0:brad    :15,d0:cameron :00,e0:        :00,e0:        :00,e0:        :00,e0:        :00|52,52,52,52|0] [0m
+<<< brad    : [cplay|10,52,52,52]
+[37m> > [stabl|a0:ryan    :13,w0:brad    :14,d0:cameron :00,e0:        :00,e0:        :00,e0:        :00,e0:        :00|10,52,52,52|0] [0m
+<<< ryan    : [cplay|08,52,52,52]
+skipping brad    
+[94mnew round[0m
+[37m> > [stabl|a0:ryan    :12,w0:brad    :14,d0:cameron :00,e0:        :00,e0:        :00,e0:        :00,e0:        :00|52,52,52,52|0] [0m
+<<< ryan    : [cplay|14,15,52,52]
+[37m> > [stabl|w0:ryan    :10,a0:brad    :14,d0:cameron :00,e0:        :00,e0:        :00,e0:        :00,e0:        :00|14,15,52,52|0] [0m
+<<< brad    : [cplay|12,13,52,52]
+skipping ryan    
+[94mnew round[0m
+[37m> > [stabl|w0:ryan    :10,a0:brad    :12,d0:cameron :00,e0:        :00,e0:        :00,e0:        :00,e0:        :00|52,52,52,52|0] [0m
+<<< brad    : [cplay|17,52,52,52]
+[37m> > [stabl|a0:ryan    :10,w0:brad    :11,d0:cameron :00,e0:        :00,e0:        :00,e0:        :00,e0:        :00|17,52,52,52|0] [0m
+<<< ryan    : [cplay|20,52,52,52]
+[37m> > [stabl|w0:ryan    :09,a0:brad    :11,d0:cameron :00,e0:        :00,e0:        :00,e0:        :00,e0:        :00|20,52,52,52|0] [0m
+<<< brad    : [cplay|21,52,52,52]
+skipping ryan    
+[94mnew round[0m
+[37m> > [stabl|w0:ryan    :09,a0:brad    :10,d0:cameron :00,e0:        :00,e0:        :00,e0:        :00,e0:        :00|52,52,52,52|0] [0m
+<<< brad    : [cplay|28,30,31,52]
+[37m> > [stabl|a0:ryan    :09,w0:brad    :07,d0:cameron :00,e0:        :00,e0:        :00,e0:        :00,e0:        :00|28,30,31,52|0] [0m
+<<< ryan    : [cplay|52,52,52,52]
+[94mnew round[0m
+[37m> > [stabl|w0:ryan    :09,a0:brad    :07,d0:cameron :00,e0:        :00,e0:        :00,e0:        :00,e0:        :00|52,52,52,52|0] [0m
+<<< brad    : [cplay|32,34,52,52]
+[37m> > [stabl|a0:ryan    :09,w0:brad    :05,d0:cameron :00,e0:        :00,e0:        :00,e0:        :00,e0:        :00|32,34,52,52|0] [0m
+<<< ryan    : [cplay|52,52,52,52]
+[94mnew round[0m
+[37m> > [stabl|w0:ryan    :09,a0:brad    :05,d0:cameron :00,e0:        :00,e0:        :00,e0:        :00,e0:        :00|52,52,52,52|0] [0m
+<<< brad    : [cplay|37,38,52,52]
+[37m> > [stabl|a0:ryan    :09,w0:brad    :03,d0:cameron :00,e0:        :00,e0:        :00,e0:        :00,e0:        :00|37,38,52,52|0] [0m
+<<< ryan    : [cplay|52,52,52,52]
+[94mnew round[0m
+[37m> > [stabl|w0:ryan    :09,a0:brad    :03,d0:cameron :00,e0:        :00,e0:        :00,e0:        :00,e0:        :00|52,52,52,52|0] [0m
+<<< brad    : [cplay|40,52,52,52]
+[37m> > [stabl|a0:ryan    :09,w0:brad    :02,d0:cameron :00,e0:        :00,e0:        :00,e0:        :00,e0:        :00|40,52,52,52|0] [0m
+<<< ryan    : [cplay|41,52,52,52]
+skipping brad    
+[94mnew round[0m
+[37m> > [stabl|a0:ryan    :08,w0:brad    :02,d0:cameron :00,e0:        :00,e0:        :00,e0:        :00,e0:        :00|52,52,52,52|0] [0m
+<<< ryan    : [cplay|25,26,27,52]
+[37m> > [stabl|w0:ryan    :05,a0:brad    :02,d0:cameron :00,e0:        :00,e0:        :00,e0:        :00,e0:        :00|25,26,27,52|0] [0m
+<<< brad    : [cplay|52,52,52,52]
+[94mnew round[0m
+[37m> > [stabl|a0:ryan    :05,w0:brad    :02,d0:cameron :00,e0:        :00,e0:        :00,e0:        :00,e0:        :00|52,52,52,52|0] [0m
+<<< ryan    : [cplay|33,52,52,52]
+[37m> > [stabl|w0:ryan    :04,a0:brad    :02,d0:cameron :00,e0:        :00,e0:        :00,e0:        :00,e0:        :00|33,52,52,52|0] [0m
+<<< brad    : [cplay|47,52,52,52]
+[37m> > [stabl|a0:ryan    :04,w0:brad    :01,d0:cameron :00,e0:        :00,e0:        :00,e0:        :00,e0:        :00|47,52,52,52|0] [0m
+<<< ryan    : [cplay|44,52,52,52]
+skipping brad    
+[94mnew round[0m
+[37m> > [stabl|a0:ryan    :03,w0:brad    :01,d0:cameron :00,e0:        :00,e0:        :00,e0:        :00,e0:        :00|52,52,52,52|0] [0m
+<<< ryan    : [cplay|36,52,52,52]
+[37m> > [stabl|w0:ryan    :02,a0:brad    :01,d0:cameron :00,e0:        :00,e0:        :00,e0:        :00,e0:        :00|36,52,52,52|0] [0m
+<<< brad    : [cplay|49,52,52,52]
+[92m2 played [0m
+[94mbrad     has position 1 [0m
+[94mnew round[0m
+[37m> > [stabl|a0:ryan    :02,w0:brad    :00,d0:cameron :00,e0:        :00,e0:        :00,e0:        :00,e0:        :00|52,52,52,52|0] [0m
+<<< ryan    : [cplay|48,50,52,52]
+[92m2 played [0m
+[94mryan     has position 2 [0m
+[92mend of game[0m
+Cancelling lobby timeout
+Starting lobby timeout
+[92mstarting Game [0m
+[37m> > [schat|________|RESULTS                                                        ] [0m
+[37m> > [schat|________|brad is the Warlord                                            ] [0m
+[37m> > [schat|________|ryan is the Scumbag                                            ] [0m
+Not enough players, sending to lobby
+[37m> > [slobb|02|brad    ,ryan    ] [0m
+[94m||| got connection 4 from ('127.0.0.1', 48426) [0m
+[37m[cjoin|cameron ][0m
+<<< [cjoin|cameron ]
+>>> [sjoin|cameron ]
+[37m> > [slobb|03|brad    ,ryan    ,cameron ] [0m
+Cancelling lobby timeout
+Starting lobby timeout
+[92mstarting Game [0m
+[37m> > [slobb|00] [0m
+[94m>>> brad     [shand|14,04,46,38,28,23,51,11,33,29,34,13,39,44,48,22,49,21] [0m
+[94m>>> ryan     [shand|09,20,00,10,27,06,37,15,01,35,17,40,07,08,02,50,31,52] [0m
+[94m>>> cameron  [shand|30,36,16,24,42,25,43,18,26,19,45,12,03,47,32,05,41,52] [0m
+[37m> > [stabl|w0:brad    :18,a0:ryan    :17,w0:cameron :17,e0:        :00,e0:        :00,e0:        :00,e0:        :00|52,52,52,52|1] [0m
+<<< ryan    : [cplay|00,52,52,52]
+[37m> > [stabl|w0:brad    :18,w0:ryan    :16,a0:cameron :17,e0:        :00,e0:        :00,e0:        :00,e0:        :00|00,52,52,52|0] [0m
+<<< cameron : [cplay|03,52,52,52]
+skipping brad    
+[37m> > [stabl|p0:brad    :18,a0:ryan    :16,w0:cameron :16,e0:        :00,e0:        :00,e0:        :00,e0:        :00|03,52,52,52|0] [0m
+<<< cameron : [play 3s]
+[93mno message match [0m
+[94m>>> cameron  [strik|30|1] [0m
+<<< ryan    : [cplay|01,02,52,52]
+[37m> > [stabl|p0:brad    :18,w0:ryan    :14,a1:cameron :16,e0:        :00,e0:        :00,e0:        :00,e0:        :00|01,02,52,52|0] [0m
+[93mplay timeout [0m
+[94m>>> cameron  [strik|20|2] [0m
+[94m>>> cameron  [shand|30,36,16,24,42,25,43,18,26,19,45,12,47,32,05,41,52,52] [0m
+[37m> > [stabl|p0:brad    :18,w0:ryan    :14,a2:cameron :16,e0:        :00,e0:        :00,e0:        :00,e0:        :00|01,02,52,52|0] [0m
+[93mplay timeout [0m
+[94m>>> cameron  [strik|20|3] [0m
+[37m> > [stabl|a0:brad    :18,w0:ryan    :14,d3:cameron :00,e0:        :00,e0:        :00,e0:        :00,e0:        :00|01,02,52,52|0] [0m
+[94m>>> <<< brad    : [cplay|52,52,52,52]
+[94mnew round[0m
+cameron  [shand|52,52,52,52,52,52,52,52,52,52,52,52,52,52,52,52,52,52] [0m
+[37m> > [stabl|w0:brad    :18,a0:ryan    :14,d3:cameron :00,e0:        :00,e0:        :00,e0:        :00,e0:        :00|52,52,52,52|0] [0m
+[37m> > [stabl|w0:brad    :18,a0:ryan    :14,d3:cameron :00,e0:        :00,e0:        :00,e0:        :00,e0:        :00|52,52,52,52|0] [0m
+<<< ryan    : [cplay|06,07,52,52]
+[37m> > [stabl|a0:brad    :18,w0:ryan    :12,d3:cameron :00,e0:        :00,e0:        :00,e0:        :00,e0:        :00|06,07,52,52|0] [0m
+<<< ryan    : [cplay|08,09,10,52]
+[94m>>> ryan     [strik|15|1] [0m
+<<< brad    : [cplay|52,52,52,52]
+[93mtried to cancel play timeout [0m
+[94mnew round[0m
+[37m> > [stabl|w0:brad    :18,a1:ryan    :12,d3:cameron :00,e0:        :00,e0:        :00,e0:        :00,e0:        :00|52,52,52,52|0] [0m
+<<< ryan    : [cplay|15,52,52,52]
+[37m> > [stabl|a0:brad    :18,w1:ryan    :11,d3:cameron :00,e0:        :00,e0:        :00,e0:        :00,e0:        :00|15,52,52,52|0] [0m
+<<< brad    : [cplay|13,14,52,52]
+[37m> > [stabl|w0:brad    :16,a1:ryan    :11,d3:cameron :00,e0:        :00,e0:        :00,e0:        :00,e0:        :00|13,14,52,52|0] [0m
+<<< ryan    : [cplay|52,52,52,52]
+[94mnew round[0m
+[37m> > [stabl|a0:brad    :16,w1:ryan    :11,d3:cameron :00,e0:        :00,e0:        :00,e0:        :00,e0:        :00|52,52,52,52|0] [0m
+<<< brad    : [cplay|04,52,52,52]
+[37m> > [stabl|w0:brad    :15,a1:ryan    :11,d3:cameron :00,e0:        :00,e0:        :00,e0:        :00,e0:        :00|04,52,52,52|0] [0m
+<<< ryan    : [cplay|17,52,52,52]
+[37m> > [stabl|a0:brad    :15,w1:ryan    :10,d3:cameron :00,e0:        :00,e0:        :00,e0:        :00,e0:        :00|17,52,52,52|0] [0m
+<<< brad    : [cplay|21,22,23,52]
+[37m> > [stabl|w0:brad    :12,a1:ryan    :10,d3:cameron :00,e0:        :00,e0:        :00,e0:        :00,e0:        :00|21,22,23,52|0] [0m
+<<< ryan    : [cplay|52,52,52,52]
+[94mnew round[0m
+[37m> > [stabl|a0:brad    :12,w1:ryan    :10,d3:cameron :00,e0:        :00,e0:        :00,e0:        :00,e0:        :00|52,52,52,52|0] [0m
+<<< brad    : [cplay|11,52,52,52]
+[37m> > [stabl|w0:brad    :11,a1:ryan    :10,d3:cameron :00,e0:        :00,e0:        :00,e0:        :00,e0:        :00|11,52,52,52|0] [0m
+<<< ryan    : [cplay|20,52,52,52]
+[37m> > [stabl|a0:brad    :11,w1:ryan    :09,d3:cameron :00,e0:        :00,e0:        :00,e0:        :00,e0:        :00|20,52,52,52|0] [0m
+<<< brad    : [cplay|28,29,52,52]
+[37m> > [stabl|w0:brad    :09,a1:ryan    :09,d3:cameron :00,e0:        :00,e0:        :00,e0:        :00,e0:        :00|28,29,52,52|0] [0m
+<<< ryan    : [cplay|52,52,52,52]
+[94mnew round[0m
+[37m> > [stabl|a0:brad    :09,w1:ryan    :09,d3:cameron :00,e0:        :00,e0:        :00,e0:        :00,e0:        :00|52,52,52,52|0] [0m
+<<< brad    : [cplay|33,34,52,52]
+[37m> > [stabl|w0:brad    :07,a1:ryan    :09,d3:cameron :00,e0:        :00,e0:        :00,e0:        :00,e0:        :00|33,34,52,52|0] [0m
+<<< ryan    : [cplay|52,52,52,52]
+[94mnew round[0m
+[37m> > [stabl|a0:brad    :07,w1:ryan    :09,d3:cameron :00,e0:        :00,e0:        :00,e0:        :00,e0:        :00|52,52,52,52|0] [0m
+<<< brad    : [cplay|38,39,52,52]
+[37m> > [stabl|w0:brad    :05,a1:ryan    :09,d3:cameron :00,e0:        :00,e0:        :00,e0:        :00,e0:        :00|38,39,52,52|0] [0m
+<<< ryan    : [cplay|52,52,52,52]
+[94mnew round[0m
+[37m> > [stabl|a0:brad    :05,w1:ryan    :09,d3:cameron :00,e0:        :00,e0:        :00,e0:        :00,e0:        :00|52,52,52,52|0] [0m
+<<< brad    : [cplay|44,46,52,52]
+[37m> > [stabl|w0:brad    :03,a1:ryan    :09,d3:cameron :00,e0:        :00,e0:        :00,e0:        :00,e0:        :00|44,46,52,52|0] [0m
+<<< ryan    : [cplay|52,52,52,52]
+[94mnew round[0m
+[37m> > [stabl|a0:brad    :03,w1:ryan    :09,d3:cameron :00,e0:        :00,e0:        :00,e0:        :00,e0:        :00|52,52,52,52|0] [0m
+<<< brad    : [cplay|48,49,51,52]
+[92m2 played [0m
+[94mbrad     has position 1 [0m
+[94mnew round[0m
+[37m> > [stabl|w0:brad    :00,a1:ryan    :09,d3:cameron :00,e0:        :00,e0:        :00,e0:        :00,e0:        :00|52,52,52,52|0] [0m
+<<< ryan    : [cplay|27,52,52,52]
+[94mnew round[0m
+[37m> > [stabl|w0:brad    :00,a1:ryan    :08,d3:cameron :00,e0:        :00,e0:        :00,e0:        :00,e0:        :00|52,52,52,52|0] [0m
+<<< ryan    : [cplay|31,52,52,52]
+[94mnew round[0m
+[37m> > [stabl|w0:brad    :00,a1:ryan    :07,d3:cameron :00,e0:        :00,e0:        :00,e0:        :00,e0:        :00|52,52,52,52|0] [0m
+<<< ryan    : [cplay|35,52,52,52]
+[94mnew round[0m
+[37m> > [stabl|w0:brad    :00,a1:ryan    :06,d3:cameron :00,e0:        :00,e0:        :00,e0:        :00,e0:        :00|52,52,52,52|0] [0m
+<<< ryan    : [cplay|37,52,52,52]
+[94mnew round[0m
+[37m> > [stabl|w0:brad    :00,a1:ryan    :05,d3:cameron :00,e0:        :00,e0:        :00,e0:        :00,e0:        :00|52,52,52,52|0] [0m
+<<< ryan    : [cplay|40,52,52,52]
+[94mnew round[0m
+[37m> > [stabl|w0:brad    :00,a1:ryan    :04,d3:cameron :00,e0:        :00,e0:        :00,e0:        :00,e0:        :00|52,52,52,52|0] [0m
+<<< ryan    : [cplay|50,52,52,52]
+[92m2 played [0m
+[94mnew round[0m
+[37m> > [stabl|w0:brad    :00,a1:ryan    :03,d3:cameron :00,e0:        :00,e0:        :00,e0:        :00,e0:        :00|52,52,52,52|0] [0m
+[93mplay timeout [0m
+[94m>>> ryan     [strik|20|2] [0m
+[94m>>> ryan     [shand|09,10,08,52,52,52,52,52,52,52,52,52,52,52,52,52,52,52] [0m
+[37m> > [stabl|w0:brad    :00,a2:ryan    :03,d3:cameron :00,e0:        :00,e0:        :00,e0:        :00,e0:        :00|52,52,52,52|0] [0m
+<<< ryan    : [cplay|08,09,10,52]
+[94mryan     has position 2 [0m
+[92mend of game[0m
+Cancelling lobby timeout
+Starting lobby timeout
+[92mstarting Game [0m
+[37m> > [schat|________|RESULTS                                                        ] [0m
+[37m> > [schat|________|brad is the Warlord                                            ] [0m
+[37m> > [schat|________|ryan is the Scumbag                                            ] [0m
+Not enough players, sending to lobby
+[37m> > [slobb|02|brad    ,ryan    ] [0m
+[94m||| got connection 4 from ('127.0.0.1', 48428) [0m
+[37m[cjoin|cameron ][0m
+<<< [cjoin|cameron ]
+>>> [sjoin|cameron ]
+[37m> > [slobb|03|brad    ,ryan    ,cameron ] [0m
+Cancelling lobby timeout
+Starting lobby timeout
+[92mstarting Game [0m
+[37m> > [slobb|00] [0m
+[94m>>> brad     [shand|36,18,14,29,25,26,01,12,23,16,30,03,46,00,24,05,10,15] [0m
+[94m>>> ryan     [shand|08,40,02,50,37,43,34,20,07,49,45,48,32,27,44,17,13,52] [0m
+[94m>>> cameron  [shand|21,19,33,41,11,28,31,51,35,47,22,04,06,38,39,42,09,52] [0m
+[37m> > [stabl|a0:brad    :18,w2:ryan    :17,w0:cameron :17,e0:        :00,e0:        :00,e0:        :00,e0:        :00|52,52,52,52|1] [0m
+<<< brad    : [cplay|00,52,52,52]
+[37m> > [stabl|w0:brad    :17,a2:ryan    :17,w0:cameron :17,e0:        :00,e0:        :00,e0:        :00,e0:        :00|00,52,52,52|0] [0m
+<<< ryan    : [cplay|02,52,52,52]
+skipping cameron 
+[37m> > [stabl|a0:brad    :17,w2:ryan    :16,p0:cameron :17,e0:        :00,e0:        :00,e0:        :00,e0:        :00|02,52,52,52|0] [0m
+<<< brad    : [cplay|01,03,52,52]
+[37m> > [stabl|w0:brad    :15,a2:ryan    :16,p0:cameron :17,e0:        :00,e0:        :00,e0:        :00,e0:        :00|01,03,52,52|0] [0m
+<<< ryan    : [cplay|52,52,52,52]
+[37m> > [stabl|w0:brad    :15,p2:ryan    :16,a0:cameron :17,e0:        :00,e0:        :00,e0:        :00,e0:        :00|01,03,52,52|0] [0m
+<<< cameron : [cplay|04,06,52,52]
+[37m> > [stabl|a0:brad    :15,p2:ryan    :16,w0:cameron :15,e0:        :00,e0:        :00,e0:        :00,e0:        :00|04,06,52,52|0] [0m
+<<< cameron : [play 4c 4h]
+[93mno message match [0m
+[94m>>> cameron  [strik|30|1] [0m
+<<< brad    : [cplay|52,52,52,52]
+[37m> > [stabl|p0:brad    :15,a2:ryan    :16,w1:cameron :15,e0:        :00,e0:        :00,e0:        :00,e0:        :00|04,06,52,52|0] [0m
+<<< ryan    : [cplay|52,52,52,52]
+[94mnew round[0m
+[37m> > [stabl|w0:brad    :15,w2:ryan    :16,a1:cameron :15,e0:        :00,e0:        :00,e0:        :00,e0:        :00|52,52,52,52|0] [0m
+[37m> > [stabl|a0:brad    :15,w2:ryan    :16,d1:cameron :00,e0:        :00,e0:        :00,e0:        :00,e0:        :00|52,52,52,52|0] [0m
+<<< brad    : [cplay|05,52,52,52]
+[37m> > [stabl|w0:brad    :14,a2:ryan    :16,d1:cameron :00,e0:        :00,e0:        :00,e0:        :00,e0:        :00|05,52,52,52|0] [0m
+<<< ryan    : [cplay|07,52,52,52]
+skipping brad    
+[94mnew round[0m
+[37m> > [stabl|w0:brad    :14,a2:ryan    :15,d1:cameron :00,e0:        :00,e0:        :00,e0:        :00,e0:        :00|52,52,52,52|0] [0m
+<<< ryan    : [cplay|08,52,52,52]
+[37m> > [stabl|a0:brad    :14,w2:ryan    :14,d1:cameron :00,e0:        :00,e0:        :00,e0:        :00,e0:        :00|08,52,52,52|0] [0m
+<<< brad    : [cplay|10,52,52,52]
+skipping ryan    
+[94mnew round[0m
+[37m> > [stabl|a0:brad    :13,w2:ryan    :14,d1:cameron :00,e0:        :00,e0:        :00,e0:        :00,e0:        :00|52,52,52,52|0] [0m
+<<< brad    : [cplay|12,14,15,52]
+[37m> > [stabl|w0:brad    :10,a2:ryan    :14,d1:cameron :00,e0:        :00,e0:        :00,e0:        :00,e0:        :00|12,14,15,52|0] [0m
+<<< ryan    : [cplay|52,52,52,52]
+[94mnew round[0m
+[37m> > [stabl|a0:brad    :10,w2:ryan    :14,d1:cameron :00,e0:        :00,e0:        :00,e0:        :00,e0:        :00|52,52,52,52|0] [0m
+<<< brad    : [cplay|16,18,52,52]
+[37m> > [stabl|w0:brad    :08,a2:ryan    :14,d1:cameron :00,e0:        :00,e0:        :00,e0:        :00,e0:        :00|16,18,52,52|0] [0m
+<<< ryan    : [cplay|52,52,52,52]
+[94mnew round[0m
+[37m> > [stabl|a0:brad    :08,w2:ryan    :14,d1:cameron :00,e0:        :00,e0:        :00,e0:        :00,e0:        :00|52,52,52,52|0] [0m
+<<< brad    : [cplay|23,52,52,52]
+[37m> > [stabl|w0:brad    :07,a2:ryan    :14,d1:cameron :00,e0:        :00,e0:        :00,e0:        :00,e0:        :00|23,52,52,52|0] [0m
+<<< ryan    : [cplay|20,52,52,52]
+skipping brad    
+[94mnew round[0m
+[37m> > [stabl|w0:brad    :07,a2:ryan    :13,d1:cameron :00,e0:        :00,e0:        :00,e0:        :00,e0:        :00|52,52,52,52|0] [0m
+<<< ryan    : [cplay|13,52,52,52]
+[37m> > [stabl|a0:brad    :07,w2:ryan    :12,d1:cameron :00,e0:        :00,e0:        :00,e0:        :00,e0:        :00|13,52,52,52|0] [0m
+<<< brad    : [cplay|24,25,26,52]
+[37m> > [stabl|w0:brad    :04,a2:ryan    :12,d1:cameron :00,e0:        :00,e0:        :00,e0:        :00,e0:        :00|24,25,26,52|0] [0m
+<<< ryan    : [cplay|52,52,52,52]
+[94mnew round[0m
+[37m> > [stabl|a0:brad    :04,w2:ryan    :12,d1:cameron :00,e0:        :00,e0:        :00,e0:        :00,e0:        :00|52,52,52,52|0] [0m
+<<< brad    : [cplay|29,30,52,52]
+[37m> > [stabl|w0:brad    :02,a2:ryan    :12,d1:cameron :00,e0:        :00,e0:        :00,e0:        :00,e0:        :00|29,30,52,52|0] [0m
+<<< ryan    : [cplay|32,34,52,52]
+[37m> > [stabl|a0:brad    :02,w2:ryan    :10,d1:cameron :00,e0:        :00,e0:        :00,e0:        :00,e0:        :00|32,34,52,52|0] [0m
+<<< brad    : [cplay|52,52,52,52]
+[94mnew round[0m
+[37m> > [stabl|w0:brad    :02,a2:ryan    :10,d1:cameron :00,e0:        :00,e0:        :00,e0:        :00,e0:        :00|52,52,52,52|0] [0m
+<<< ryan    : [cplay|17,52,52,52]
+[37m> > [stabl|a0:brad    :02,w2:ryan    :09,d1:cameron :00,e0:        :00,e0:        :00,e0:        :00,e0:        :00|17,52,52,52|0] [0m
+<<< brad    : [cplay|36,52,52,52]
+[37m> > [stabl|w0:brad    :01,a2:ryan    :09,d1:cameron :00,e0:        :00,e0:        :00,e0:        :00,e0:        :00|36,52,52,52|0] [0m
+<<< ryan    : [cplay|37,52,52,52]
+skipping brad    
+[94mnew round[0m
+[37m> > [stabl|w0:brad    :01,a2:ryan    :08,d1:cameron :00,e0:        :00,e0:        :00,e0:        :00,e0:        :00|52,52,52,52|0] [0m
+<<< ryan    : [cplay|27,52,52,52]
+[37m> > [stabl|a0:brad    :01,w2:ryan    :07,d1:cameron :00,e0:        :00,e0:        :00,e0:        :00,e0:        :00|27,52,52,52|0] [0m
+<<< brad    : [cplay|46,52,52,52]
+[94mbrad     has position 1 [0m
+[94mnew round[0m
+[37m> > [stabl|w0:brad    :00,a2:ryan    :07,d1:cameron :00,e0:        :00,e0:        :00,e0:        :00,e0:        :00|52,52,52,52|0] [0m
+<<< ryan    : [cplay|40,43,52,52]
+[94mnew round[0m
+[37m> > [stabl|w0:brad    :00,a2:ryan    :05,d1:cameron :00,e0:        :00,e0:        :00,e0:        :00,e0:        :00|52,52,52,52|0] [0m
+<<< ryan    : [cplay|44,45,52,52]
+[94mnew round[0m
+[37m> > [stabl|w0:brad    :00,a2:ryan    :03,d1:cameron :00,e0:        :00,e0:        :00,e0:        :00,e0:        :00|52,52,52,52|0] [0m
+<<< ryan    : [cplay|48,49,50,52]
+[92m2 played [0m
+[94mryan     has position 2 [0m
+[92mend of game[0m
+Cancelling lobby timeout
+Starting lobby timeout
+[94m||| got connection 4 from ('127.0.0.1', 48429) [0m
+[37m[cjoin|cameron ][0m
+<<< [cjoin|cameron ]
+>>> [sjoin|camero_ ]
+[37m> > [slobb|01|camero_ ] [0m
+[92mstarting Game [0m
+[37m> > [schat|________|RESULTS                                                        ] [0m
+[37m> > [schat|________|brad is the Warlord                                            ] [0m
+[37m> > [schat|________|ryan is a Plebian                                              ] [0m
+[37m> > [schat|________|camero_ is the Scumbag                                         ] [0m
+[37m> > [slobb|00] [0m
+[94m>>> brad     [shand|33,50,48,07,12,39,34,35,00,31,38,29,20,16,28,06,18,26] [0m
+[94m>>> ryan     [shand|17,15,21,04,23,41,22,19,32,47,42,10,24,14,25,11,09,52] [0m
+swapping
+Starting swap timeout
+[94m>>> brad     [swapw|51] [0m
+<<< brad    : [cswap|00]
+Cancelling swap timeout
+Swapped 0 with 51
+[94m>>> camero_  [swaps|0|51] [0m
+[94m>>> camero_  [shand|44,43,27,03,49,05,08,45,37,46,13,36,02,01,40,30,00,52] [0m
+[94m>>> brad     [shand|33,50,48,07,12,39,34,35,31,38,29,20,16,28,06,18,26,51] [0m
+[37m> > [stabl|a0:brad    :18,w2:ryan    :17,w0:camero_ :17,e0:        :00,e0:        :00,e0:        :00,e0:        :00|52,52,52,52|0] [0m
+<<< brad    : [cplay|06,07,52,52]
+[37m> > [stabl|w0:brad    :16,a2:ryan    :17,w0:camero_ :17,e0:        :00,e0:        :00,e0:        :00,e0:        :00|06,07,52,52|0] [0m
+<<< ryan    : [cplay|52,52,52,52]
+[37m> > [stabl|w0:brad    :16,p2:ryan    :17,a0:camero_ :17,e0:        :00,e0:        :00,e0:        :00,e0:        :00|06,07,52,52|0] [0m
+<<< camero_ : [cplay|36,37,52,52]
+[37m> > [stabl|a0:brad    :16,p2:ryan    :17,w0:camero_ :15,e0:        :00,e0:        :00,e0:        :00,e0:        :00|36,37,52,52|0] [0m
+<<< camero_ : [play qc qd]
+[93mno message match [0m
+[94m>>> camero_  [strik|30|1] [0m
+<<< brad    : [cplay|38,39,52,52]
+skipping ryan    
+[37m> > [stabl|w0:brad    :14,p2:ryan    :17,a1:camero_ :15,e0:        :00,e0:        :00,e0:        :00,e0:        :00|38,39,52,52|0] [0m
+[93mplay timeout [0m
+[94m>>> camero_  [strik|20|2] [0m
+[94m>>> camero_  [shand|44,43,27,03,49,05,08,45,46,13,02,01,40,30,00,52,52,52] [0m
+[37m> > [stabl|w0:brad    :14,p2:ryan    :17,a2:camero_ :15,e0:        :00,e0:        :00,e0:        :00,e0:        :00|38,39,52,52|0] [0m
+[93mplay timeout [0m
+[94m>>> camero_  [strik|20|3] [0m
+[37m> > [stabl|a0:brad    :14,p2:ryan    :17,d3:camero_ :00,e0:        :00,e0:        :00,e0:        :00,e0:        :00|38,39,52,52|0] [0m
+[94m>>> camero_  [shand|52,52,52,52,52,52,52,52,52,52,52,52,52,52,52,52,52,52] [0m
+<<< brad    : [cplay|48,50,51,52]
+[92m2 played[37m> >  [stabl|a0:brad    :14,p2:ryan    :17,d3:camero_ :00,e0:        :00,e0:        :00,e0:        :00,e0:        :00|38,39,52,52|0] [0m
+[0m
+[94mnew round[0m
+[37m> > [stabl|a0:brad    :11,w2:ryan    :17,d3:camero_ :00,e0:        :00,e0:        :00,e0:        :00,e0:        :00|52,52,52,52|0] [0m
+<<< brad    : [cplay|52,52,52,52]
+[94m>>> brad     [strik|18|1] [0m
+<<< brad    : [cplay|12,52,52,52]
+[93mtried to cancel play timeout [0m
+[37m> > [stabl|w1:brad    :10,a2:ryan    :17,d3:camero_ :00,e0:        :00,e0:        :00,e0:        :00,e0:        :00|12,52,52,52|0] [0m
+<<< ryan    : [cplay|14,15,52,52]
+[37m> > [stabl|a1:brad    :10,w2:ryan    :15,d3:camero_ :00,e0:        :00,e0:        :00,e0:        :00,e0:        :00|14,15,52,52|0] [0m
+<<< brad    : [cplay|16,18,52,52]
+[37m> > [stabl|w1:brad    :08,a2:ryan    :15,d3:camero_ :00,e0:        :00,e0:        :00,e0:        :00,e0:        :00|16,18,52,52|0] [0m
+<<< ryan    : [cplay|17,19,52,52]
+skipping brad    
+[94mnew round[0m
+[37m> > [stabl|w1:brad    :08,a2:ryan    :13,d3:camero_ :00,e0:        :00,e0:        :00,e0:        :00,e0:        :00|52,52,52,52|0] [0m
+<<< ryan    : [cplay|04,52,52,52]
+[37m> > [stabl|a1:brad    :08,w2:ryan    :12,d3:camero_ :00,e0:        :00,e0:        :00,e0:        :00,e0:        :00|04,52,52,52|0] [0m
+<<< brad    : [cplay|20,52,52,52]
+[37m> > [stabl|w1:brad    :07,a2:ryan    :12,d3:camero_ :00,e0:        :00,e0:        :00,e0:        :00,e0:        :00|20,52,52,52|0] [0m
+<<< ryan    : [cplay|21,22,23,52]
+[37m> > [stabl|a1:brad    :07,w2:ryan    :09,d3:camero_ :00,e0:        :00,e0:        :00,e0:        :00,e0:        :00|21,22,23,52|0] [0m
+<<< brad    : [cplay|52,52,52,52]
+[94mnew round[0m
+[37m> > [stabl|w1:brad    :07,a2:ryan    :09,d3:camero_ :00,e0:        :00,e0:        :00,e0:        :00,e0:        :00|52,52,52,52|0] [0m
+<<< ryan    : [cplay|09,10,11,52]
+[37m> > [stabl|a1:brad    :07,w2:ryan    :06,d3:camero_ :00,e0:        :00,e0:        :00,e0:        :00,e0:        :00|09,10,11,52|0] [0m
+<<< brad    : [cplay|52,52,52,52]
+[94mnew round[0m
+[37m> > [stabl|w1:brad    :07,a2:ryan    :06,d3:camero_ :00,e0:        :00,e0:        :00,e0:        :00,e0:        :00|52,52,52,52|0] [0m
+<<< ryan    : [cplay|24,25,52,52]
+[37m> > [stabl|a1:brad    :07,w2:ryan    :04,d3:camero_ :00,e0:        :00,e0:        :00,e0:        :00,e0:        :00|24,25,52,52|0] [0m
+<<< brad    : [cplay|52,52,52,52]
+[94mnew round[0m
+[37m> > [stabl|w1:brad    :07,a2:ryan    :04,d3:camero_ :00,e0:        :00,e0:        :00,e0:        :00,e0:        :00|52,52,52,52|0] [0m
+<<< ryan    : [cplay|32,52,52,52]
+[37m> > [stabl|a1:brad    :07,w2:ryan    :03,d3:camero_ :00,e0:        :00,e0:        :00,e0:        :00,e0:        :00|32,52,52,52|0] [0m
+<<< brad    : [cplay|33,34,35,52]
+[37m> > [stabl|w1:brad    :04,a2:ryan    :03,d3:camero_ :00,e0:        :00,e0:        :00,e0:        :00,e0:        :00|33,34,35,52|0] [0m
+<<< ryan    : [cplay|52,52,52,52]
+[94mnew round[0m
+[37m> > [stabl|a1:brad    :04,w2:ryan    :03,d3:camero_ :00,e0:        :00,e0:        :00,e0:        :00,e0:        :00|52,52,52,52|0] [0m
+<<< brad    : [cplay|26,52,52,52]
+[37m> > [stabl|w1:brad    :03,a2:ryan    :03,d3:camero_ :00,e0:        :00,e0:        :00,e0:        :00,e0:        :00|26,52,52,52|0] [0m
+<<< ryan    : [cplay|41,42,52,52]
+[37m> > [stabl|a1:brad    :03,w2:ryan    :01,d3:camero_ :00,e0:        :00,e0:        :00,e0:        :00,e0:        :00|41,42,52,52|0] [0m
+<<< brad    : [cplay|52,52,52,52]
+[94mnew round[0m
+[37m> > [stabl|w1:brad    :03,a2:ryan    :01,d3:camero_ :00,e0:        :00,e0:        :00,e0:        :00,e0:        :00|52,52,52,52|0] [0m
+<<< ryan    : [cplay|47,52,52,52]
+[94mryan     has position 1 [0m
+[94mnew round[0m
+[37m> > [stabl|a1:brad    :03,w2:ryan    :00,d3:camero_ :00,e0:        :00,e0:        :00,e0:        :00,e0:        :00|52,52,52,52|0] [0m
+<<< brad    : [cplay|28,29,31,52]
+[94mbrad     has position 2 [0m
+[92mend of game[0m
+Cancelling lobby timeout
+Starting lobby timeout
+[92mstarting Game [0m
+[37m> > [schat|________|RESULTS                                                        ] [0m
+[37m> > [schat|________|ryan is the Warlord                                            ] [0m
+[37m> > [schat|________|brad is the Scumbag                                            ] [0m
+Not enough players, sending to lobby
+[37m> > [slobb|02|ryan    ,brad    ] [0m
 shutting down server...
 [93mtried to cancel play timeout [0m
 [93mtried to cancel swap timeout [0m
-[93mtried to cancel lobby timeout [0m
+Cancelling lobby timeout
