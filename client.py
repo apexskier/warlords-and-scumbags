@@ -30,6 +30,7 @@ class Client(object):
         self.last_play_cards = None
         self.last_play_count = None
         self.last_play_val = None
+        self.first_round = True
         # Connect to server at port
         try:
             self.socket_error = False
@@ -84,7 +85,7 @@ class Client(object):
                                     elif m_type == "chat":
                                         self.cchat(message_match.group('body'))
                                     elif m_type == "swap":
-                                        card = message_match.group('body').split()
+                                        card = message_match.group('body').strip()
                                         card = cardgame.makeCardVal(card)
                                         if card != None:
                                             self.send('[cswap|' + str(card).zfill(2) + ']')
@@ -257,9 +258,9 @@ class Client(object):
             last_play_count = len(last_play_cards)
             last_play_val = cardgame.cardVal(last_play_cards[0])
 
-            if first_round == "1" and self.text_mode:
+            if first_round == "1" and self.text_mode and self.first_round:
                 msg = COLORS["OKGREEN"] + "A game has started." + COLORS["ENDC"]
-
+                self.first_round = False
 
             if self.text_mode:
                 active_player = next((player for player in players if player['status'] == 'a'), None)
@@ -268,33 +269,35 @@ class Client(object):
                         self.prnt(active_player['name'] + " is starting.")
                     elif self.last_players:
                         last_player = players[(players.index(active_player) - 1) % len(players)]
-                        last_player_last_turn = next(player for player in self.last_players if player['name'] == last_player['name']) # should never be none
-                        last_play_str = ', '.join([cardgame.cardStr(card) for card in last_play_cards])
-                        if last_player['status'] == 'w':
-                            if last_player_last_turn['status'] == 'a':
-                                if last_player['num_cards'] == 0:
-                                    if last_play_val:
-                                        self.prnt(last_player['name'] + " went out with " + last_play_str + ".")
+                        last_player_last_turn = next((player for player in self.last_players if player['name'] == last_player['name']), None) # should never be none
+                        if last_player_last_turn:
+                            last_play_str = ', '.join([cardgame.cardStr(card) for card in last_play_cards])
+                            if last_player['status'] == 'w':
+                                if last_player_last_turn['status'] == 'a':
+                                    if last_player['num_cards'] == 0:
+                                        if last_play_val:
+                                            self.prnt(last_player['name'] + " went out with " + last_play_str + ".")
+                                        else:
+                                            self.prnt(last_player['name'] + " went out and started a new round.")
+                                    elif len([player for player in self.last_players if player['status'] == 'w' or player['status'] == 'a']) == 1:
+                                        self.prnt(last_player['name'] + " passed. New round.")
+                                    elif last_play_val:
+                                        self.prnt(last_player['name'] + " played " + last_play_str + ".")
                                     else:
-                                        self.prnt(last_player['name'] + " went out and started a new round.")
-                                elif len([player for player in self.last_players if player['status'] == 'w' or player['status'] == 'a']) == 1:
-                                    self.prnt(last_player['name'] + " passed. New round.")
-                                elif last_play_val:
-                                    self.prnt(last_player['name'] + " played " + last_play_str + ".")
-                                else:
+                                        self.prnt(last_player['name'] + " passed.")
+                                elif last_player_last_turn['status'] == 'w':
+                                    last_active_player = next((player for player in self.last_players if player['status'] == 'a'), None)
+                                    if last_active_player and last_player['num_cards'] != '00':
+                                        self.prnt(last_player['name'] + " got skipped. New round.")
+                                elif last_player_last_turn['status'] == 'p':
+                                    self.prnt(active_player['name'] + " is starting.")
+                            elif last_player['status'] == 'p':
+                                if last_player_last_turn['status'] == 'a':
                                     self.prnt(last_player['name'] + " passed.")
-                            elif last_player_last_turn['status'] == 'w':
-                                last_active_player = next(player for player in self.last_players if player['status'] == 'a')
-                                self.prnt(last_player['name'] + " got skipped. New round.")
-                            elif last_player_last_turn['status'] == 'p':
-                                self.prnt(active_player['name'] + " is starting.")
-                        elif last_player['status'] == 'p':
-                            if last_player_last_turn['status'] == 'a':
-                                self.prnt(last_player['name'] + " passed.")
-                            else:
-                                prev_player = players[(players.index(last_player) - 1) % len(players)]
-                                self.prnt(prev_player['name'] + " played " + last_play_str + ".")
-                                self.prnt(last_player['name'] + " was skipped.")
+                                else:
+                                    prev_player = players[(players.index(last_player) - 1) % len(players)]
+                                    self.prnt(prev_player['name'] + " played " + last_play_str + ".")
+                                    self.prnt(last_player['name'] + " was skipped.")
 
                 self.last_players = players
                 self.last_play_cards = last_play_cards
@@ -302,7 +305,7 @@ class Client(object):
                 self.last_play_val = last_play_val
 
             if me:
-                if first_round == "1" and self.text_mode:
+                if first_round == "1" and self.first_round and self.text_mode:
                     msg += " Get ready to play!"
                     self.prnt(msg)
                 if me['status'] == 'a':
@@ -315,7 +318,7 @@ class Client(object):
                         if last_play_str:
                             self.prnt("Beat: " + last_play_str)
                         else:
-                            if int(first_round):
+                            if int(first_round) and self.first_round:
                                 self.prnt("Start with the 3 of Clubs")
                             else:
                                 self.prnt("Play any card")
@@ -351,9 +354,10 @@ class Client(object):
 
     def shand(self, body):
         cards_str = body.split(',')
-        self.hand = [int(card) for card in cards_str if card != '52']
-        self.hand.sort()
-        hand_str = ', '.join([cardgame.cardStr(card) for card in self.hand])
+        self.hand = [int(card) for card in cards_str if card and card != '52']
+        if self.hand:
+            self.hand.sort()
+            hand_str = ', '.join([cardgame.cardStr(card) for card in self.hand])
 
     def strik(self, body):
         error_match = re.match('^(?P<error>(?P<error_1>\d)(?P<error_2>\d))\|(?P<count>\d)$', body)
@@ -427,7 +431,7 @@ class Client(object):
         if self.text_mode:
             cards = body.split('|')
             if len(cards) == 2:
-                self.prnt("You lost the " + str(cardgame.cardStr(cards[0])) + " to the Warlord and got the " + str(cardgame.cardStr(cards[1])) + ".")
+                self.prnt("You lost the " + cardgame.cardStr(cards[0]) + " to the Warlord and got the " + cardgame.cardStr(cards[1]) + ".")
 
     def cplay(self, cards):
         if self.hand:

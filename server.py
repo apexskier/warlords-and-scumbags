@@ -90,12 +90,15 @@ class Server(object):
         if client.socket in self.outputs:
             self.outputs.remove(client.socket)
         if client in players:
-            if client.status == 'a':
-                players[self.getNextPlayerIndex(players.index(client))].status = 'a'
-                self.starting_round = 0
             client.status = 'd'
-            client.hand = []
-            self.stabl()
+            next_client = self.getNextPlayerIndex(players.index(client))
+            if next_client:
+                if client.status == 'a':
+                    players[next_client].status = 'a'
+                    self.starting_round = 0
+                client.status = 'd'
+                client.hand = []
+                self.stabl()
         elif client in lobby:
             lobby.remove(client)
             if self.timeouts['lobby']['timer'] and len(lobby) < self.minimum_players:
@@ -534,7 +537,10 @@ class Server(object):
                 players[i].social_next = self.track_social              # save their place
                 print COLORS['OKBLUE'] + players[i].name, "has position", players[i].social_next, COLORS['ENDC']
                 self.track_social += 1
-            if len([player for player in players if (player.status != 'e' and player.status != 'd' and len(player.hand) > 0)]) > 0: # if there are players left
+            if self.track_social - 1 == len(players):
+                print COLORS['OKGREEN'] + "end of game" + COLORS['ENDC']
+                self.startTimeout('lobby', self.setUpGame)
+            elif len([player for player in players if (player.status != 'e' and player.status != 'd' and len(player.hand) > 0)]) > 0: # if there are players left
                 players[i].status = 'a' if two and len(players[i].hand) else 'p' if passed else 'w' # mark them as waiting or passed
                 if skipped:                                         # if they skipped the next person
                     i = self.getNextPlayerIndex(i)                      # get the next player
