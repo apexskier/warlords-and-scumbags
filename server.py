@@ -94,7 +94,10 @@ class Server(object):
         if len(msg.strip()):
             print COLORS['MUTE'] + "> > --all--", COLORS['ENDC'], msg
             for o in self.outputs:
-                o.send(msg)
+                try:
+                    o.send(msg)
+                except socket.error, e:
+                    print COLORS['FAIL'] + "            Tried sending message to closed socket.", e, COLORS['ENDC']
         else:
             print COLORS['FAIL'] + "            Tried to send an empty message to all clients." + COLORS['ENDC']
 
@@ -161,15 +164,16 @@ class Server(object):
                 if s == self.socket: # new connection, unknown client
                     client_socket, address = self.socket.accept()
                     print "|||          got connection %d from %s" % (client_socket.fileno(), address)
-                    client = Client(client_socket, address)
-                    self.inputs.append(client_socket)
-                    self.outputs.append(client_socket)
-                    new_clients.append(client)
 
-                    if len(lobby) >= MAX_CLIENTS: # bring client in
-                        self.send(client.socket, "[strik|81|1]")
-                        print COLORS["WARNING"] + "             Too many clients, disconnecting: " + str(client.address) + COLORS["ENDC"]
-                        self.disconnectClient(client)
+                    if len(lobby) < MAX_CLIENTS: # bring client in
+                        client = Client(client_socket, address)
+                        self.inputs.append(client_socket)
+                        self.outputs.append(client_socket)
+                        new_clients.append(client)
+                    else:
+                        self.send(client_socket, "[strik|81|1]")
+                        print COLORS["WARNING"] + "             Too many clients, disconnecting: " + str(address) + COLORS["ENDC"]
+                        client_socket.close()
 
                 elif s == sys.stdin:
                     # standard input
@@ -178,6 +182,8 @@ class Server(object):
                         running = 0
                     elif junk.startswith("stabl"):
                         self.stabl()
+                    elif junk.startswith("chat"):
+                        self.schat("________", junk)
 
                 else:
                     # known connection
@@ -325,16 +331,21 @@ class Server(object):
     " Actions from clients
     """
     def cjoin(self, client, body):
-        join_match = re.match('^(?P<name>(?:.){8})$', body)
-        if join_match:
-            client.join(join_match.group('name'))
-            if client.valid:
-                self.send(client.socket, '[sjoin|' + client.name_ + ']')
-                new_clients.remove(client)
-                lobby.append(client)
-                self.slobb()
+        if not client.valid:
+            join_match = re.match('^(?P<name>(?:.){8})$', body)
+            if join_match and join_match.group('name').strip():
+                client.join(join_match.group('name'))
+                if client.valid:
+                    self.send(client.socket, '[sjoin|' + client.name_ + ']')
+                    if client in new_clients:
+                        new_clients.remove(client)
+                    lobby.append(client)
+                    self.slobb()
+            else:
+                print COLORS['WARNING'] + "             Invalid join request from " + str(client.address), COLORS['ENDC']
+                self.strik(client, 30)
         else:
-            print COLORS['WARNING'] + "             Invalid join request from " + str(client.address), COLORS['ENDC']
+            print COLORS['WARNING'] + "             Multiple join requests from " + client.name, COLORS['ENDC']
             self.strik(client, 30)
 
     def cchat(self, client, body):
@@ -459,6 +470,7 @@ class Server(object):
             self.stabl()
 
     def sendResults(self):
+        self.cancelTimeout('play')
         if players and players[0].social:
             self.schat("________", "RESULTS:")
             for player in players:
@@ -575,7 +587,8 @@ class Server(object):
 
     def getNextPlayerIndex(self, index):
         index = (index + 1) % len(players)
-        if len([player for player in players if player.valid and player.hand and len(player.hand) and player.status != 'e' and player.status != 'd']) > 0: # this was 1
+        players_list = [player for player in players if player.valid and player.hand and len(player.hand) and player.status != 'e' and player.status != 'd']
+        if players_list and len(players_list) > 0: # this was 1
             if len(players[index].hand) == 0 or players[index].status == 'e' or players[index].status == 'd':
                 return self.getNextPlayerIndex(index)
             else:
@@ -686,7 +699,7 @@ class Client(object):
         data = data.replace('\r', '')
 
         for i, char in enumerate(data): # for each character in data
-            if i + len(self.buff) - start < 71:
+            if i + len(self.buff) - start < 1024:
                 if not self.recieving_msg:  # if we haven't seen the start of a message
                     self.buff = ""              # clear the buffer
                     start = i                   # and mark where we're at as the starting position
@@ -703,6 +716,7 @@ class Client(object):
                             self.buff = "" # clear the buffer
                             start = i + 1
             else:
+                print COLORS['WARNING'] + "Client sent too large of a message for me to handle", COLORS['ENDC']
                 return (messages, True)
 
         if self.recieving_msg: # if we hit the end of the data without finishing a message
