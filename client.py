@@ -114,8 +114,10 @@ class Client(object):
                                     self.prnt(COLORS['WARNING'] + "Sending invalid message" + COLORS['ENDC'])
                                     self.send("[" + data + "]")
                     elif i == self.socket:
+                        self.prnt("message from socket")
                         try:
                             data = self.socket.recv(BUFSIZ)
+                            self.prnt(COLORS['WARNING'] + str(data) + COLORS['ENDC'])
                             if not data:
                                 self.prnt(data)
                                 self.prnt("Recieved nothing from the server")
@@ -125,6 +127,7 @@ class Client(object):
                                 messages = input_got[0]
                                 errors = input_got[1]
                                 for message in messages:
+                                    self.prnt(COLORS['OKBLUE'] + message + COLORS['ENDC'])
                                     message_match = re.match('\[s(?P<type>[a-zA-Z]{4})\|(?P<body>.+)\]', message)
                                     if message_match:
                                         m_type = message_match.group('type')
@@ -138,6 +141,7 @@ class Client(object):
                                             self.slobb(message_match.group('body'))
                                         elif m_type == "hand":
                                             self.shand(message_match.group('body'))
+                                            self.prnt("done with shand")
                                         elif m_type == "trik":
                                             self.strik(message_match.group('body'))
                                         elif m_type == "wapw":
@@ -168,7 +172,7 @@ class Client(object):
         data = data.replace('\r', '')
 
         for i, char in enumerate(data): # for each character in data
-            if i + len(self.buff) - start < 400:
+            if i + len(self.buff) - start < 1024:
                 if not self.recieving_msg:  # if we haven't seen the start of a message
                     self.buff = ""              # clear the buffer
                     start = i                   # and mark where we're at as the starting position
@@ -185,10 +189,11 @@ class Client(object):
                             self.buff = "" # clear the buffer
                             start = i + 1
             else:
+                self.prnt("Server sent too large of a message for me to handle")
                 return (messages, True)
 
         if self.recieving_msg: # if we hit the end of the data without finishing a message
-            self.buff += data  # save it's beginning part in a buffer (per client)
+            self.buff = data[start:-1]
 
         return (messages, False)
 
