@@ -145,7 +145,7 @@ class Client(object):
                                                 self.prnt("unknown message from server")
                         except socket.error, e:
                             self.prnt("Socket error: ")
-                            self.prnt(e)
+                            print e
 
             except KeyboardInterrupt:
                 self.socket.close()
@@ -287,7 +287,7 @@ class Client(object):
                                         self.prnt(last_player['name'] + " passed.")
                                 elif last_player_last_turn['status'] == 'w':
                                     last_active_player = next((player for player in self.last_players if player['status'] == 'a'), None)
-                                    if last_active_player and last_player['num_cards'] != '00':
+                                    if last_active_player and next((player for player in players if player['name'] == last_player['name']), None) and next((player for player in players if player['name'] == last_player['name']), None)['num_cards']:
                                         self.prnt(last_player['name'] + " got skipped. New round.")
                                 elif last_player_last_turn['status'] == 'p':
                                     self.prnt(active_player['name'] + " is starting.")
@@ -327,7 +327,6 @@ class Client(object):
                             self.cplay([00])
                         else:
                             play = []
-                            self.prnt("last play: {!s}".format(last_play_val))
                             for card in self.hand:
                                 if cardgame.cardVal(card) >= last_play_val:
                                     if len(play) == 0:
@@ -413,7 +412,7 @@ class Client(object):
 
             self.prnt(COLORS['WARNING'] + "Strike " + count + "! " + error_msg + COLORS['ENDC'])
         else:
-            self.prnt(COLORS['WARNING'] + "Strike" +  + "! You've done something wrong." + COLORS['ENDC'])
+            self.prnt(COLORS['WARNING'] + "Strike! You've done something wrong." + COLORS['ENDC'])
 
     def swapw(self, body):
         if self.text_mode:
