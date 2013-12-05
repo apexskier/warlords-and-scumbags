@@ -198,6 +198,8 @@ class Client(object):
             self.send("[cchat|" + message.ljust(63) + "]")
 
     def send(self, msg):
+        if self.retard:
+            time.sleep(0.2)
         if not self.text_mode:
             self.prnt(msg)
         self.socket.send(msg)
@@ -240,8 +242,6 @@ class Client(object):
                     self.prnt("There " + ("is " if num == 1 else "are ") + str(num) + (" person" if num == 1 else " people") + " in the lobby: " + ppl_str)
 
     def stabl(self, body):
-        if self.retard:
-            time.sleep(0.5)
         body_match = re.match('^(?P<players>[apwdeAPWDE]\d:(?:[a-zA-Z]|_|\d| ){8}:\d\d,[apwdeAPWDE]\d:(?:[a-zA-Z]|_|\d| ){8}:\d\d,[apwdeAPWDE]\d:(?:[a-zA-Z]|_|\d| ){8}:\d\d,[apwdeAPWDE]\d:(?:[a-zA-Z]|_|\d| ){8}:\d\d,[apwdeAPWDE]\d:(?:[a-zA-Z]|_|\d| ){8}:\d\d,[apwdeAPWDE]\d:(?:[a-zA-Z]|_|\d| ){8}:\d\d,[apwdeAPWDE]\d:(?:[a-zA-Z]|_|\d| ){8}:\d\d)\|(?P<last_play>\d\d,\d\d,\d\d,\d\d)\|(?P<first_round>[0|1])$', body)
         if body_match:
             msg = ""

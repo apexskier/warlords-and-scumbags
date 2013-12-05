@@ -80,7 +80,7 @@ class Server(object):
             o.send(msg)
 
     def getPlayerFromSocket(self, socket):
-        return next((player for player in players if socket == player.socket), None)
+        return next((player for player in players if player.valid and socket == player.socket), None)
     def getClientFromSocket(self, socket):
         return next((client for client in lobby if socket == client.socket), None)
 
@@ -99,12 +99,17 @@ class Server(object):
             client.status = 'd'
             print COLORS['WARNING'] + "             Player " + client.name + " disconnecting." + COLORS['ENDC']
             client.hand = []
+            client.valid = False
             if resend_table:
-                self.stabl()
+                if self.timeouts['swap']['timer']:
+                    self.cancelTimeout('swap')
+                    self.swapTimeoutAction()
+                else:
+                    self.stabl()
         elif client in lobby:
             lobby.remove(client)
-            if self.timeouts['lobby']['timer'] and len(lobby) < self.minimum_players:
-                self.cancelTimeout('lobby')
+            #if self.timeouts['lobby']['timer'] and len(lobby) < self.minimum_players:
+            #    self.cancelTimeout('lobby')
             self.slobb()
             print COLORS['WARNING'] + "             Lobby client " + client.name + " disconnecting." + COLORS['ENDC']
         elif client in new_clients:
@@ -151,6 +156,8 @@ class Server(object):
                     junk = sys.stdin.readline()
                     if junk.startswith("quit"):
                         running = 0
+                    elif junk.startswith("stabl"):
+                        self.stabl()
 
                 else:
                     # known connection
@@ -227,15 +234,15 @@ class Server(object):
             self.startTimeout('lobby', self.setUpGame)
 
     def stabl(self):
-        if len([player for player in players if player.status != 'd' and player.status != 'e' and len(player.hand)]) <= 1:
-            last_player = next((player for player in players if player.status != 'd' and player.status != 'e' and len(player.hand)), None)
+        if len([player for player in players if player.valid and player.status != 'd' and player.status != 'e' and len(player.hand)]) <= 1:
+            last_player = next((player for player in players if player.valid and player.status != 'd' and player.status != 'e' and len(player.hand)), None)
             if last_player:
                 last_player.social_next = self.track_social
                 self.track_social += 1
             print COLORS['OKGREEN'] + "             End of game." + COLORS['ENDC']
             self.startTimeout('lobby', self.setUpGame)
-        elif len([player for player in players if player.status != 'd' and player.status != 'e']) > 1 and\
-                len([player for player in players if player.status == 'a']):
+        elif len([player for player in players if player.valid and player.status != 'd' and player.status != 'e']) > 1 and\
+                len([player for player in players if player.valid and player.status == 'a']):
             msg = "[stabl|"
             msg_players = ['e0:        :00'] * 7
             # <status><strikes>:<name>:<num_cards>
@@ -442,7 +449,7 @@ class Server(object):
         self.last_play = [52]
         if not len(players):
             self.starting_round = 1
-        players = [player for player in players if player.status != 'e' and player.status != 'd']
+        players = [player for player in players if player.valid and player.status != 'e' and player.status != 'd']
         for player in players: # set existing players social statuses
             player.social = player.social_next
             player.social_next = None
@@ -501,7 +508,7 @@ class Server(object):
                     self.shand(player)
 
         if self.starting_round == 1:
-            starting_player = next(player for player in players if 0 in player.hand)
+            starting_player = next(player for player in players if player.valid and 0 in player.hand)
             starting_player.status = 'a'
             self.stabl()
         else:
@@ -519,10 +526,11 @@ class Server(object):
     def swapTimeoutAction(self):
         self.cancelTimeout('swap')
         if len(players) > 0:
-            self.strik(players[0], 20)
-            players[0].hand.remove(self.scumbag_highcard) # remove card from warlord
+            if players[0].valid:
+                self.strik(players[0], 20)
+                players[0].hand.remove(self.scumbag_highcard) # remove card from warlord
+                self.shand(players[0])
             players[self.getLastPlayerIndex()].hand.append(self.scumbag_highcard) # give to scumbag
-            self.shand(players[0])
             self.swaps(52, 52)
         self.stabl()
 
@@ -537,7 +545,7 @@ class Server(object):
 
     def getNextPlayerIndex(self, index):
         index = (index + 1) % len(players)
-        if len([player for player in players if len(player.hand) and player.status != 'e' and player.status != 'd']) > 0: # this was 1
+        if len([player for player in players if player.valid and player.hand and len(player.hand) and player.status != 'e' and player.status != 'd']) > 0: # this was 1
             if len(players[index].hand) == 0 or players[index].status == 'e' or players[index].status == 'd':
                 return self.getNextPlayerIndex(index)
             else:
@@ -545,11 +553,11 @@ class Server(object):
         else:
             print COLORS['WARNING'] + "             Players still doing stuff:", [player.name for player in players if len(player.hand) and player.status != 'e' and player.status != 'd'], COLORS["ENDC"]
             self.stabl()
-            return next((player for player in players if len(player.hand) and player.status != 'e' and player.status != 'd'), None)
+            return next((player for player in players if player.valid and len(player.hand) and player.status != 'e' and player.status != 'd'), None)
 
     def nextTurn(self, passed=False, skipped=False, two=False):
         # get player who played last
-        player = next((player for player in players if player.status == 'a'), None)
+        player = next((player for player in players if player.valid and player.status == 'a'), None)
         if player:
             i = players.index(player)
             orig_i = i
@@ -560,7 +568,7 @@ class Server(object):
             if self.track_social - 1 == len(players):
                 print COLORS['WARNING'] + "             End of game triggered during nextTurn" + COLORS['ENDC']
                 self.startTimeout('lobby', self.setUpGame)
-            elif len([player for player in players if (player.status != 'e' and player.status != 'd' and len(player.hand) > 0)]) > 0: # if there are players left
+            elif len([player for player in players if player.valid and (player.status != 'e' and player.status != 'd' and len(player.hand) > 0)]) > 0: # if there are players left
                 players[i].status = 'a' if two and len(players[i].hand) else 'p' if passed else 'w' # mark them as waiting or passed
                 if skipped:                                         # if they skipped the next person
                     i = self.getNextPlayerIndex(i)                      # get the next player
@@ -571,7 +579,7 @@ class Server(object):
                     if not len(players[i].hand):
                         print COLORS['WARNING'] + "             Player has no hand and I'm setting him as active", COLORS['ENDC']
                     players[i].status = 'a'                         # mark them as their turn
-                waiting_players = [player for player in players if player.status == 'w' and len(player.hand) > 0] # count the number of waiting players
+                waiting_players = [player for player in players if player.valid and player.status == 'w' and len(player.hand) > 0] # count the number of waiting players
                 if len(waiting_players) >= 1 and not two:           # if there still are waiting players continue game
                     self.stabl()
                 else:                                               # else new round
@@ -605,6 +613,7 @@ class Client(object):
         self.name = name
         self.social = None
         self.social_next = None
+        self.hand = None
 
     def recv(self, buff):
         return self.socket.recv(buff)

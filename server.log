@@ -1,5 +1,12 @@
 Starting up ...
 [92mListening on port 36714 ... [0m
+|||          got connection 4 from ('127.0.0.1', 46313)
+[90m<<<         [0m [cjoin|cameron ]
+[90m>>>         [0m [sjoin|cameron ]
+[90m> > --all-- [0m [slobb|01|cameron ]
+[90m> > --all-- [0m [slobb|00|]
+[93m             Lobby client cameron disconnecting.[0m
+[93m             Disconnected[0m
 shutting down server...
 [93m             Tried to cancel play timeout [0m
 [93m             Tried to cancel swap timeout [0m
