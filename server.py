@@ -264,7 +264,10 @@ class Server(object):
         strike_count = client.strike()
         self.send(client.socket, "[strik|{0}|{1}]".format(strike_code, strike_count))
         if strike_count >= 3:
-            print COLORS["WARNING"] + "             Kicking " + client.name + COLORS["ENDC"]
+            if hasattr(client, 'name'):
+                print COLORS["WARNING"] + "             Kicking " + client.name + COLORS["ENDC"]
+            else:
+                print COLORS["WARNING"] + "             Kicking " + str(client.address) + COLORS["ENDC"]
             self.disconnectClient(client)
         elif str(strike_code)[0] == "1" and int(strike_code) != 15:
             self.startTimeout('play', self.playTimeoutAction)
@@ -444,7 +447,7 @@ class Server(object):
             player.social = player.social_next
             player.social_next = None
 
-        for i in range(1, MAXIMUM_PLAYERS - len(players)): # get some new players from the lobby
+        for i in range(1, MAXIMUM_PLAYERS - len(players) + 1): # get some new players from the lobby
             if len(lobby) > 0:
                 player = lobby.pop(0)
                 if self.starting_round == 0:
