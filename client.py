@@ -259,8 +259,7 @@ class Client(object):
             last_play_val = cardgame.cardVal(last_play_cards[0])
 
             if first_round == "1" and self.text_mode and self.first_round:
-                msg = COLORS["OKGREEN"] + "A game has started." + COLORS["ENDC"]
-                self.first_round = False
+                msg = COLORS["OKGREEN"] + "A new game has started." + COLORS["ENDC"]
 
             if self.text_mode:
                 active_player = next((player for player in players if player['status'] == 'a'), None)
@@ -269,6 +268,8 @@ class Client(object):
                         self.prnt(active_player['name'] + " is starting.")
                     elif self.last_players:
                         last_player = players[(players.index(active_player) - 1) % len(players)]
+                        if not last_player['num_cards']:
+                            last_player = players[(players.index(active_player) - 1) % len(players)]
                         last_player_last_turn = next((player for player in self.last_players if player['name'] == last_player['name']), None) # should never be none
                         if last_player_last_turn:
                             last_play_str = ', '.join([cardgame.cardStr(card) for card in last_play_cards])
@@ -341,10 +342,10 @@ class Client(object):
                     pass; # not my turn
             else:
                 pass; # not in current game
+            self.first_round = False
 
         else:
-            pass;
-            self.prnt(COLORS['WARNING'] + "no body match" + COLORS['ENDC'])
+            self.prnt(COLORS['WARNING'] + "             Invalid stabl message body." + COLORS['ENDC'])
 
     def schat(self, body):
         chat_match = re.match('^(?P<from>(?:[a-zA-Z]|_|\d| ){8})\|(?P<msg>(.*))$', body)
@@ -353,10 +354,16 @@ class Client(object):
 
     def shand(self, body):
         cards_str = body.split(',')
+        old_len = 0
+        if self.hand:
+            old_len = len(self.hand)
         self.hand = [int(card) for card in cards_str if card and card != '52']
         if self.hand:
             self.hand.sort()
             hand_str = ', '.join([cardgame.cardStr(card) for card in self.hand])
+            if len(self.hand) > old_len:
+                self.prnt(COLORS["OKGREEN"] + "A new hand has started." + COLORS["ENDC"])
+
 
     def strik(self, body):
         error_match = re.match('^(?P<error>(?P<error_1>\d)(?P<error_2>\d))\|(?P<count>\d)$', body)
