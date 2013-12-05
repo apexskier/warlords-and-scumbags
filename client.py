@@ -13,7 +13,7 @@ COLORS = {
     }
 
 class Client(object):
-    def __init__(self, name, stdscr, host = 'localhost', port = 36714, manual = False, text = False, retard = False):
+    def __init__(self, name, stdscr, host = 'localhost', port = 36714, manual = False, text = False, retard = False, quiet = False):
         self.name = name
         self.people = []
         self.cmd_buff = ""
@@ -24,6 +24,7 @@ class Client(object):
         self.manual = manual
         self.text_mode = text
         self.retard = retard
+        self.quiet = quiet
         self.buff = ""
         self.recieving_msg = False
         self.hand = None
@@ -51,15 +52,16 @@ class Client(object):
             self.socket.close()
 
     def prnt(self, text):
-        if self.text_mode:
-            text = text.encode('utf8')
-        print text
+        if not self.quiet:
+            if self.text_mode:
+                text = text.encode('utf8')
+            print text
 
     def playGame(self):
         while not self.flag:
             try:
                 # wait for input form stdin and socket
-                ready_in, ready_out, ready_exept = select.select([0, self.socket], [], [])
+                ready_in, ready_out, ready_except = select.select([0, self.socket], [], [])
 
                 for i in ready_in:
                     if i == 0:
@@ -96,7 +98,7 @@ class Client(object):
                                 elif data == "pass":
                                     self.cplay([52])
                             else:
-                                message_match = re.match('^c(?P<type>[a-zA-Z]{4})\|(?P<body>.+)$', data)
+                                message_match = re.match('^c(?P<type>[a-zA-Z]{4})\|?(?P<body>.+)?$', data)
                                 if message_match:
                                     m_type = message_match.group('type')
                                     if m_type == "play":
@@ -104,10 +106,12 @@ class Client(object):
                                     elif m_type == "chat":
                                         self.cchat(message_match.group('body'))
                                     elif m_type == "hand":
-                                        self.shand(message_match.group('body'))
+                                        self.chand()
                                     else:
+                                        self.prnt(COLORS['WARNING'] + "Sending unknown message" + COLORS['ENDC'])
                                         self.send("[" + data + "]")
                                 else:
+                                    self.prnt(COLORS['WARNING'] + "Sending invalid message" + COLORS['ENDC'])
                                     self.send("[" + data + "]")
                     elif i == self.socket:
                         try:
@@ -198,11 +202,15 @@ class Client(object):
             self.send("[cchat|" + message.ljust(63) + "]")
 
     def send(self, msg):
-        if self.retard:
-            time.sleep(0.2)
-        if not self.text_mode:
-            self.prnt(msg)
-        self.socket.send(msg)
+        if len(msg.strip()):
+            try:
+                if self.retard:
+                    time.sleep(0.2)
+                if not self.text_mode:
+                    self.prnt(msg)
+                self.socket.send(msg)
+            except socket.error, e:
+                print COLORS['FAIL'] + "            Socket error sending message to server.", e, COLORS['ENDC']
 
     def sjoin(self, body):
         sjoin_match = re.match('^(?:\d|_|[a-zA-Z]| ){8}$', body)
@@ -334,12 +342,13 @@ class Client(object):
                             self.cplay([00])
                         else:
                             play = []
-                            for card in self.hand:
-                                if cardgame.cardVal(card) >= last_play_val:
-                                    if len(play) == 0:
-                                        play.append(card)
-                                    elif cardgame.cardVal(card) == cardgame.cardVal(play[0]):
-                                        play.append(card)
+                            if self.hand:
+                                for card in self.hand:
+                                    if cardgame.cardVal(card) >= last_play_val:
+                                        if len(play) == 0:
+                                            play.append(card)
+                                        elif cardgame.cardVal(card) == cardgame.cardVal(play[0]):
+                                            play.append(card)
                             if len(play) >= last_play_count:
                                 self.cplay(play)
                             else:
@@ -369,7 +378,8 @@ class Client(object):
             hand_str = ', '.join([cardgame.cardStr(card) for card in self.hand])
             if len(self.hand) > old_len:
                 self.prnt(COLORS["OKGREEN"] + "A new hand has started." + COLORS["ENDC"])
-
+        else:
+            self.prnt(COLORS['WARNING'] + "You have no hand after getting an shand message" + COLORS['ENDC'])
 
     def strik(self, body):
         error_match = re.match('^(?P<error>(?P<error_1>\d)(?P<error_2>\d))\|(?P<count>\d)$', body)
@@ -377,6 +387,7 @@ class Client(object):
             error_1 = error_match.group('error_1')
             count = error_match.group('count')
             error = error_match.group('error')
+            nonerror = False
             if error_1 == '1' or error == "70":
                 self.chand()
             error_msg = "Unknown error."
@@ -422,8 +433,14 @@ class Client(object):
                 error_msg = "You can't connect."
             elif error == "81":
                 error_msg = "There are too many people connected already."
+            elif error == "82":
+                nonerror = True
+                error_msg = "The server is closing."
 
-            self.prnt(COLORS['WARNING'] + "Strike " + count + "! " + error_msg + COLORS['ENDC'])
+            if not nonerror:
+                self.prnt(COLORS['WARNING'] + "Strike " + count + "! " + error_msg + COLORS['ENDC'])
+            else:
+                self.prnt(COLORS['WARNING'] + error_msg + COLORS['ENDC'])
         else:
             self.prnt(COLORS['WARNING'] + "Strike! You've done something wrong." + COLORS['ENDC'])
 
@@ -458,7 +475,8 @@ if __name__ == "__main__":
             '-n': 'anon',
             '-m': False,
             '-t': False,
-            '-r': False
+            '-r': False,
+            '-q': False
         }
     args = sys.argv
     num_args = len(args)
@@ -470,6 +488,7 @@ if __name__ == "__main__":
     -m : Flag indicating manual mode
     -t : Flag indicating text mode (human readable output)
     -r : Flag indicating slow mode (will wait before reading table message)
+    -q : Flag indicating quiet mode
 """
     for i, arg in enumerate(args):
         if arg == '-s':
@@ -496,6 +515,8 @@ if __name__ == "__main__":
             options['-t'] = True
         elif arg == '-r':
             options['-r'] = True
+        elif arg == '-q':
+            options['-q'] = True
         else:
             if i != 0 and args[i - 1] not in options.keys():
                 print 'Extra parameter given'
@@ -504,7 +525,7 @@ if __name__ == "__main__":
     if len(sys.argv) < 1 or not valid:
         sys.exit(err_msg)
     else:
-        client = Client(options['-n'], None, options['-s'], options['-p'], options['-m'], options['-t'], options['-r'])
+        client = Client(options['-n'], None, options['-s'], options['-p'], options['-m'], options['-t'], options['-r'], options['-q'])
         client.playGame()
 
 
