@@ -90,21 +90,28 @@ class Server(object):
         if client.socket in self.outputs:
             self.outputs.remove(client.socket)
         if client in players:
+            resend_table = False
             next_client = self.getNextPlayerIndex(players.index(client))
             if next_client != None and client.status == 'a':
+                resend_table = True
                 players[next_client].status = 'a'
                 self.starting_round = 0
             client.status = 'd'
+            print COLORS['WARNING'] + "             Player " + client.name + " disconnecting." + COLORS['ENDC']
             client.hand = []
-            self.stabl()
+            if resend_table:
+                self.stabl()
         elif client in lobby:
             lobby.remove(client)
             if self.timeouts['lobby']['timer'] and len(lobby) < self.minimum_players:
                 self.cancelTimeout('lobby')
             self.slobb()
+            print COLORS['WARNING'] + "             Lobby client " + client.name + " disconnecting." + COLORS['ENDC']
         elif client in new_clients:
+            print COLORS['WARNING'] + "             New client " + str(client.address) + " disconnecting." + COLORS['ENDC']
             new_clients.remove(client)
         client.socket.close()
+        print COLORS['WARNING'] + "             Disconnected" + COLORS['ENDC']
 
     def serve(self):
         self.starting_round = 1

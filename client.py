@@ -1,4 +1,4 @@
-import socket, select, sys, re, cardgame, math
+import socket, select, sys, re, cardgame, math, time
 
 BUFSIZ = 1024
 COLORS = {
@@ -13,7 +13,7 @@ COLORS = {
     }
 
 class Client(object):
-    def __init__(self, name, stdscr, host = 'localhost', port = 36714, manual = False, text = False):
+    def __init__(self, name, stdscr, host = 'localhost', port = 36714, manual = False, text = False, retard = False):
         self.name = name
         self.people = []
         self.cmd_buff = ""
@@ -23,6 +23,7 @@ class Client(object):
         self.host = host
         self.manual = manual
         self.text_mode = text
+        self.retard = retard
         self.buff = ""
         self.recieving_msg = False
         self.hand = None
@@ -31,6 +32,7 @@ class Client(object):
         self.last_play_count = None
         self.last_play_val = None
         self.first_round = True
+        self.waiting_on_chand = False
         # Connect to server at port
         try:
             self.socket_error = False
@@ -188,6 +190,7 @@ class Client(object):
 
     def chand(self):
         self.send("[chand]")
+        self.waiting_on_chand = True
 
     def cchat(self, msg):
         msgs = re.findall(r'\b.{1,63}\b', msg)
@@ -230,12 +233,15 @@ class Client(object):
                             self.prnt(person + " joined the lobby.")
                     if old:
                         for person in old:
-                            self.prnt(person + " left the lobby.")
+                            if person.strip():
+                                self.prnt(person + " left the lobby.")
                 else:
                     ppl_str = ', '.join(self.people)
                     self.prnt("There " + ("is " if num == 1 else "are ") + str(num) + (" person" if num == 1 else " people") + " in the lobby: " + ppl_str)
 
     def stabl(self, body):
+        if self.retard:
+            time.sleep(0.5)
         body_match = re.match('^(?P<players>[apwdeAPWDE]\d:(?:[a-zA-Z]|_|\d| ){8}:\d\d,[apwdeAPWDE]\d:(?:[a-zA-Z]|_|\d| ){8}:\d\d,[apwdeAPWDE]\d:(?:[a-zA-Z]|_|\d| ){8}:\d\d,[apwdeAPWDE]\d:(?:[a-zA-Z]|_|\d| ){8}:\d\d,[apwdeAPWDE]\d:(?:[a-zA-Z]|_|\d| ){8}:\d\d,[apwdeAPWDE]\d:(?:[a-zA-Z]|_|\d| ){8}:\d\d,[apwdeAPWDE]\d:(?:[a-zA-Z]|_|\d| ){8}:\d\d)\|(?P<last_play>\d\d,\d\d,\d\d,\d\d)\|(?P<first_round>[0|1])$', body)
         if body_match:
             msg = ""
@@ -449,30 +455,56 @@ if __name__ == "__main__":
     options = {
             '-s': 'localhost',
             '-p': 36714,
-            '-n': '',
+            '-n': 'anon',
             '-m': False,
-            '-t': False
+            '-t': False,
+            '-r': False
         }
     args = sys.argv
     num_args = len(args)
+    valid = True
+    err_msg = 'Usage: %s [-s server] [-p port] [-n name] [-m] [-t] [-r]' % args[0] + """
+\n    -s : The DNS name or IP address of a server
+    -p : The port number to connect to
+    -n : The name you wish to be known by
+    -m : Flag indicating manual mode
+    -t : Flag indicating text mode (human readable output)
+    -r : Flag indicating slow mode (will wait before reading table message)
+"""
     for i, arg in enumerate(args):
         if arg == '-s':
-            options['-s'] = args[i + 1]
+            if len(args) <= i + 1 or args[i + 1] in options.keys():
+                print 'Error for -s'
+                valid = False
+            else:
+                options['-s'] = args[i + 1]
         elif arg == '-p':
-            options['-p'] = args[i + 1]
+            if len(args) <= i + 1 or args[i + 1] in options.keys():
+                print 'Error for -p'
+                valid = False
+            else:
+                options['-p'] = args[i + 1]
         elif arg == '-n':
-            if num_args < i + 2:
-                sys.exit('Usage: %s [-s server] [-p port] [-n name] [-m]' % args[0])
-            options['-n'] = args[i + 1]
+            if len(args) <= i + 1 or args[i + 1] in options.keys():
+                print 'Error for -n'
+                valid = False
+            else:
+                options['-n'] = args[i + 1]
         elif arg == '-m':
             options['-m'] = True
         elif arg == '-t':
             options['-t'] = True
+        elif arg == '-r':
+            options['-r'] = True
+        else:
+            if i != 0 and args[i - 1] not in options.keys():
+                print 'Extra parameter given'
+                valid = False
 
-    if len(sys.argv) < 1:
-        sys.exit('Usage: %s [-s server] [-p port] [-n name] [-m] [-g]' % args[0])
+    if len(sys.argv) < 1 or not valid:
+        sys.exit(err_msg)
     else:
-        client = Client(options['-n'], None, options['-s'], options['-p'], options['-m'], options['-t'])
+        client = Client(options['-n'], None, options['-s'], options['-p'], options['-m'], options['-t'], options['-r'])
         client.playGame()
 
 
