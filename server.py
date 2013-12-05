@@ -41,43 +41,62 @@ class Server(object):
                 }
             }
         self.minimum_players = minimum_players
+        self.running = False
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         self.socket.bind(("", port))
         print COLORS['OKGREEN'] + "Listening on port", port, "...", COLORS['ENDC']
         self.socket.listen(backlog)
         # trap keyboard interupts
-        signal.signal(signal.SIGINT, self.sighandler)
+        signal.signal(signal.SIGINT, self.shutDown)
 
-    def sighandler(self, signum, frame):
-        # close the server
-        print "shutting down server..."
+    def shutDown(self, signum=None, frame=None):
+        print "Shutting down server..."
+        # close clients
+        for client in players + lobby + new_clients:
+            self.send(client.socket, "[strik|82|0]")
+            self.disconnectClient(client);
+            if client.socket in self.inputs:
+                self.inputs.remove(client.socket)
+            if client.socket in self.outputs:
+                self.outputs.remove(client.socket)
+            client.socket.close()
         # stop timeouts
         for timeout in self.timeouts:
             self.cancelTimeout(timeout)
-        # close clients
-        for o in self.outputs:
-            o.close()
         self.socket.close()
         sys.exit(0)
 
     def send(self, recipient, msg):
-        try:
-            client = self.getPlayerFromSocket(recipient)
-            if not client:
-                client = self.getClientFromSocket(recipient)
+        client = self.getPlayerFromSocket(recipient)
+        if not client:
+            client = self.getClientFromSocket(recipient)
+        if len(msg.strip()):
+            try:
+                if client:
+                    print COLORS['MUTE'] + '>>>', client.name_ + COLORS['OKBLUE'], msg, COLORS['ENDC']
+                else:
+                    print COLORS['MUTE'] + '>>>         ' + COLORS['ENDC'], msg
+                recipient.send(msg + '\n')
+            except socket.error, e:
+                if client:
+                    print COLORS['FAIL'] + "            Socket error sending message to a client.", client.address
+                else:
+                    print COLORS['FAIL'] + "            Tried sending a message to no one."
+                print e, COLORS['ENDC']
+        else:
             if client:
-                print COLORS['MUTE'] + '>>>', client.name_ + COLORS['OKBLUE'], msg, COLORS['ENDC']
+                print COLORS['FAIL'] + "            Tried to send an empty message to a client.", client.address, COLORS['ENDC']
             else:
-                print COLORS['MUTE'] + '>>>         ' + COLORS['ENDC'], msg
-            recipient.send(msg + '\n')
-        except socket.error, e:
-            pass;
+                print COLORS['FAIL'] + "            Tried to send an empty message to no one.", COLORS['ENDC']
 
     def sendAll(self, msg):
-        print COLORS['MUTE'] + "> > --all--", COLORS['ENDC'], msg
-        for o in self.outputs:
-            o.send(msg)
+        if len(msg.strip()):
+            print COLORS['MUTE'] + "> > --all--", COLORS['ENDC'], msg
+            for o in self.outputs:
+                o.send(msg)
+        else:
+            print COLORS['FAIL'] + "            Tried to send an empty message to all clients." + COLORS['ENDC']
 
     def getPlayerFromSocket(self, socket):
         return next((player for player in players if player.valid and socket == player.socket), None)
@@ -126,9 +145,9 @@ class Server(object):
         # self.logf = open('server.log', 'w')
         self.outputs = []
 
-        running = True
+        self.running = True
 
-        while running:
+        while self.running:
             try:
                 ready_in, ready_out, ready_exp = select.select(self.inputs, self.outputs, [])
             except select.error, e:
@@ -142,14 +161,15 @@ class Server(object):
                 if s == self.socket: # new connection, unknown client
                     client_socket, address = self.socket.accept()
                     print "|||          got connection %d from %s" % (client_socket.fileno(), address)
+                    client = Client(client_socket, address)
+                    self.inputs.append(client_socket)
+                    self.outputs.append(client_socket)
+                    new_clients.append(client)
 
-                    if len(lobby) < MAX_CLIENTS: # bring client in
-                        client = Client(client_socket, address)
-                        self.inputs.append(client_socket)
-                        self.outputs.append(client_socket)
-                        new_clients.append(client)
-                    else:
-                        self.send(client_socket, "[strik|81]")
+                    if len(lobby) >= MAX_CLIENTS: # bring client in
+                        self.send(client.socket, "[strik|81|1]")
+                        print COLORS["WARNING"] + "             Too many clients, disconnecting: " + str(client.address) + COLORS["ENDC"]
+                        self.disconnectClient(client)
 
                 elif s == sys.stdin:
                     # standard input
@@ -210,12 +230,19 @@ class Server(object):
                             print COLORS['WARNING'] + "             Unknown client messaging", COLORS['ENDC']
 
                     except socket.error, e:
-                        print COLORS['FAIL'] + "             Socket error on known client", e, COLORS['ENDC']
+                        unknown_client = False
+                        client = next((player for player in players if s == player.socket), None)
+                        if not client:
+                            client = next((client for client in lobby if s == client.socket), None)
+                            if not client:
+                                client = next((client for client in new_clients if s == client.socket), None)
+                                unknown_client = True
+                        name = ""
+                        if not unknown_client:
+                            name = client.name
+                        print COLORS['FAIL'] + "             Socket error on known client:", name, e, COLORS['ENDC']
 
-        for o in self.outputs:
-            o.send("[strik|82|3]")
-            o.close();
-        self.socket.close()
+        self.shutDown()
 
     """
     " Server messages
@@ -427,6 +454,8 @@ class Server(object):
         if active_player:
             self.strik(active_player, 20)
             self.shand(active_player)
+            self.startTimeout('play', self.playTimeoutAction)
+        else:
             self.stabl()
 
     def sendResults(self):
@@ -528,8 +557,9 @@ class Server(object):
         if len(players) > 0:
             if players[0].valid:
                 self.strik(players[0], 20)
-                players[0].hand.remove(self.scumbag_highcard) # remove card from warlord
-                self.shand(players[0])
+                if self.scumbag_highcard in players[0].hand:
+                    players[0].hand.remove(self.scumbag_highcard) # remove card from warlord
+                    self.shand(players[0])
             players[self.getLastPlayerIndex()].hand.append(self.scumbag_highcard) # give to scumbag
             self.swaps(52, 52)
         self.stabl()
