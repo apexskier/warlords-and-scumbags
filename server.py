@@ -107,6 +107,7 @@ class Server(object):
         return next((client for client in lobby if socket == client.socket), None)
 
     def disconnectClient(self, client):
+        client.socket.close()
         if client.socket in self.inputs:
             self.inputs.remove(client.socket)
         if client.socket in self.outputs:
@@ -137,7 +138,6 @@ class Server(object):
         elif client in new_clients:
             print COLORS['WARNING'] + "             New client " + str(client.address) + " disconnecting." + COLORS['ENDC']
             new_clients.remove(client)
-        client.socket.close()
         print COLORS['WARNING'] + "             Disconnected" + COLORS['ENDC']
 
     def serve(self):
