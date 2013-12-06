@@ -487,13 +487,13 @@ if __name__ == "__main__":
     args = sys.argv
     num_args = len(args)
     valid = True
-    err_msg = 'Usage: %s [-s server] [-p port] [-n name] [-m] [-t] [-r]' % args[0] + """
-\n    -s : The DNS name or IP address of a server
+    err_msg = 'Usage: %s [-s server] [-p port] [-n name] [-m] [-t] [-r]' % args[0] + """\n
+    -s : The DNS name or IP address of a server
     -p : The port number to connect to
     -n : The name you wish to be known by
     -m : Flag indicating manual mode
-    -t : Flag indicating text mode (human readable output)
-    -r : Flag indicating slow mode (will wait before reading table message)
+    -t : Flag indicating text mode
+    -r : Flag indicating slow mode
     -q : Flag indicating quiet mode
 """
     for i, arg in enumerate(args):

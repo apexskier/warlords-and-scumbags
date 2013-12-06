@@ -171,7 +171,7 @@ class Server(object):
                         self.outputs.append(client_socket)
                         new_clients.append(client)
                     else:
-                        self.send(client_socket, "[strik|81|1]")
+                        self.send(client_socket, "[strik|81|0]")
                         print COLORS["WARNING"] + "             Too many clients, disconnecting: " + str(address) + COLORS["ENDC"]
                         client_socket.close()
 
@@ -736,15 +736,39 @@ if __name__ == "__main__":
             '-l': 15, # lobby timeout
         }
     args = sys.argv
+    err_msg = 'Usage: %s [-t play_timeout] [-m minimum_players] [-l lobby_timout]' % args[0] + """\n
+    -t : Time to wait for someone to play
+    -m : The minimum amount of players to start a game
+    -l : Time to wait to start a game once the minimum number of players are available and between hands
+"""
     num_args = len(args)
-    if num_args % 2 != 1:
-        sys.exit('Usage: %s [-t play_timeout] [-m minimum_players] [-l lobby_timout]' % args[0])
+    valid = True
     for i, arg in enumerate(args):
         if arg == '-t':
-            options['-t'] = int(args[i + 1])
+            if len(args) <= i + 1 or args[i + 1] in options.keys() or not args[i + 1].isdigit():
+                print 'Error for -t'
+                valid = False
+            else:
+                options['-t'] = int(args[i + 1])
         elif arg == '-m':
-            options['-m'] = int(args[i + 1])
+            if len(args) <= i + 1 or args[i + 1] in options.keys() or not args[i + 1].isdigit():
+                print 'Error for -m'
+                valid = False
+            else:
+                options['-m'] = int(args[i + 1])
         elif arg == '-l':
-            options['-l'] = int(args[i + 1])
+            if len(args) <= i + 1 or args[i + 1] in options.keys() or not args[i + 1].isdigit():
+                print 'Error for -l'
+                valid = False
+            else:
+                options['-l'] = int(args[i + 1])
+        else:
+            if i != 0 and args[i - 1] not in options.keys():
+                print 'Extra parameter given'
+                valid = False
 
-    Server(options['-t'], options['-m'], options['-l']).serve()
+    if len(sys.argv) < 1 or not valid:
+        sys.exit(err_msg)
+    else:
+        Server(options['-t'], options['-m'], options['-l']).serve()
+
