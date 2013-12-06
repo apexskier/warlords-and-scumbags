@@ -191,7 +191,7 @@ class Client(object):
                 return (messages, True)
 
         if self.recieving_msg: # if we hit the end of the data without finishing a message
-            self.buff = data[start:-1]
+            self.buff = data[start:]
 
         return (messages, False)
 
