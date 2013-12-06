@@ -104,7 +104,7 @@ class Server(object):
     def getPlayerFromSocket(self, socket):
         return next((player for player in players if player.valid and socket == player.socket), None)
     def getClientFromSocket(self, socket):
-        return next((client for client in lobby if socket == client.socket), None)
+        return next((client for client in lobby if client.valid and socket == client.socket), None)
 
     def disconnectClient(self, client):
         client.socket.close()
