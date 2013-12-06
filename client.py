@@ -213,7 +213,7 @@ class Client(object):
                     self.prnt(msg)
                 self.socket.send(msg)
             except socket.error, e:
-                print COLORS['FAIL'] + "            Socket error sending message to server.", e, COLORS['ENDC']
+                print COLORS['FAIL'] + "Socket error sending message to server.", e, COLORS['ENDC']
 
     def sjoin(self, body):
         sjoin_match = re.match('^(?:\d|_|[a-zA-Z]| ){8}$', body)
@@ -364,7 +364,7 @@ class Client(object):
             self.first_round = False
 
         else:
-            self.prnt(COLORS['WARNING'] + "             Invalid stabl message body." + COLORS['ENDC'])
+            self.prnt(COLORS['WARNING'] + "Invalid stabl message body. " + body + COLORS['ENDC'])
 
     def schat(self, body):
         chat_match = re.match('^(?P<from>(?:[a-zA-Z]|_|\d| ){8})\|(?P<msg>(.*))$', body)
