@@ -1,0 +1,21 @@
+Usage: python server.py [-t play_timeout] [-m minimum_players] [-l lobby_timout]
+
+Arguments
+
+    -t : Time to wait for someone to play
+
+    -m : The minimum amount of players to start a game
+
+    -l : Time to wait to start a game once the minimum number of players are
+         available and between hands
+
+Known bugs:
+
+* When the maximum amount of clients are connected, after connect/disconnect
+  activity, the server blocks somewhere and doesn't properly recieve messages.
+  Because of this, the list of clients it needs to send messages to becomes
+  incorrect, and it tries to send messages to sockets that are no longer
+  connected.
+
+Written for Python 2.7.4.
+

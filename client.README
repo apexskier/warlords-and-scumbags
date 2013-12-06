@@ -1,0 +1,35 @@
+Usage: python client.py [-s server] [-p port] [-n name] [-m] [-t] [-r]
+
+Arguments
+
+    -s : The DNS name or IP address of a server
+
+    -p : The port number to connect to
+
+    -n : The name you wish to be known by
+        This should be a valid C variable name. You should be corrected by the
+        server if the name is in use or not valid.
+
+    -m : Flag indicating manual mode
+        If not present the client will automatically play, assuming you will
+        not enter commands.
+
+    -t : Flag indicating text mode
+        The output will be more human readable. Intended for use with -m.
+
+    -r : Flag indicating slow mode
+        A delay of .2 seconds will be introduced before sending messages.
+        Useful for debugging, or watching auto clients play.
+
+    -q : Flag indicating quiet mode
+        Will only print the most bad error messages.
+
+Known bugs:
+
+* Text mode doesn't display what's actually happening with only two players
+  left.
+* Text mode displays a new hand message when a strike occurs that resends your
+  hand.
+
+Written for Python 2.7.4.
+
