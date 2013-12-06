@@ -33,6 +33,7 @@ class Client(object):
         self.last_play_count = None
         self.last_play_val = None
         self.first_round = True
+        self.last_stabl = None
         self.waiting_on_chand = False
         # Connect to server at port
         try:
@@ -114,20 +115,17 @@ class Client(object):
                                     self.prnt(COLORS['WARNING'] + "Sending invalid message" + COLORS['ENDC'])
                                     self.send("[" + data + "]")
                     elif i == self.socket:
-                        self.prnt("message from socket")
                         try:
                             data = self.socket.recv(BUFSIZ)
-                            self.prnt(COLORS['WARNING'] + str(data) + COLORS['ENDC'])
                             if not data:
                                 self.prnt(data)
-                                self.prnt("Recieved nothing from the server")
+                                self.prnt(COLORS['WARNING'] + "Recieved nothing from the server" + COLORS['ENDC'])
                                 self.flag = True
                             else:
                                 input_got = self.processInput(data)
                                 messages = input_got[0]
                                 errors = input_got[1]
                                 for message in messages:
-                                    self.prnt(COLORS['OKBLUE'] + message + COLORS['ENDC'])
                                     message_match = re.match('\[s(?P<type>[a-zA-Z]{4})\|(?P<body>.+)\]', message)
                                     if message_match:
                                         m_type = message_match.group('type')
@@ -189,7 +187,7 @@ class Client(object):
                             self.buff = "" # clear the buffer
                             start = i + 1
             else:
-                self.prnt("Server sent too large of a message for me to handle")
+                self.prnt(COLORS['WARNING'] + "Server sent too large of a message for me to handle" + COLORS['ENDC'])
                 return (messages, True)
 
         if self.recieving_msg: # if we hit the end of the data without finishing a message
@@ -255,6 +253,7 @@ class Client(object):
                     self.prnt("There " + ("is " if num == 1 else "are ") + str(num) + (" person" if num == 1 else " people") + " in the lobby: " + ppl_str)
 
     def stabl(self, body):
+        self.last_stabl = body
         body_match = re.match('^(?P<players>[apwdeAPWDE]\d:(?:[a-zA-Z]|_|\d| ){8}:\d\d,[apwdeAPWDE]\d:(?:[a-zA-Z]|_|\d| ){8}:\d\d,[apwdeAPWDE]\d:(?:[a-zA-Z]|_|\d| ){8}:\d\d,[apwdeAPWDE]\d:(?:[a-zA-Z]|_|\d| ){8}:\d\d,[apwdeAPWDE]\d:(?:[a-zA-Z]|_|\d| ){8}:\d\d,[apwdeAPWDE]\d:(?:[a-zA-Z]|_|\d| ){8}:\d\d,[apwdeAPWDE]\d:(?:[a-zA-Z]|_|\d| ){8}:\d\d)\|(?P<last_play>\d\d,\d\d,\d\d,\d\d)\|(?P<first_round>[0|1])$', body)
         if body_match:
             msg = ""
@@ -416,6 +415,8 @@ class Client(object):
                 error_msg = "You can't pass when starting."
             elif error == "20":
                 error_msg = "You're taking too long. Play!"
+                if not self.manual and self.last_stabl:
+                    self.stabl(self.last_stabl)
             elif error == "30":
                 error_msg = "That message was bad."
             elif error == "31":

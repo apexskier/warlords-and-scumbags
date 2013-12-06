@@ -473,6 +473,8 @@ class Server(object):
         self.cancelTimeout('play')
         if players and players[0].social:
             self.schat("________", "RESULTS:")
+            if not players:
+                self.stabl()
             for player in players:
                 pos = ""
                 if player.social == 1:
@@ -586,17 +588,20 @@ class Server(object):
                 return index
 
     def getNextPlayerIndex(self, index):
-        index = (index + 1) % len(players)
-        players_list = [player for player in players if player.valid and player.hand and len(player.hand) and player.status != 'e' and player.status != 'd']
-        if players_list and len(players_list) > 0: # this was 1
-            if len(players[index].hand) == 0 or players[index].status == 'e' or players[index].status == 'd':
-                return self.getNextPlayerIndex(index)
+        if players:
+            index = (index + 1) % len(players)
+            players_list = [player for player in players if player.valid and player.hand and len(player.hand) and player.status != 'e' and player.status != 'd']
+            if players_list and len(players_list) > 0: # this was 1
+                if len(players[index].hand) == 0 or players[index].status == 'e' or players[index].status == 'd':
+                    return self.getNextPlayerIndex(index)
+                else:
+                    return index
             else:
-                return index
+                print COLORS['WARNING'] + "             Players still doing stuff:", [player.name for player in players if player.valid and player.hand and len(player.hand) and player.status != 'e' and player.status != 'd'], COLORS["ENDC"]
+                self.stabl()
+                return next((player for player in players if player.valid and len(player.hand) and player.status != 'e' and player.status != 'd'), None)
         else:
-            print COLORS['WARNING'] + "             Players still doing stuff:", [player.name for player in players if len(player.hand) and player.status != 'e' and player.status != 'd'], COLORS["ENDC"]
-            self.stabl()
-            return next((player for player in players if player.valid and len(player.hand) and player.status != 'e' and player.status != 'd'), None)
+            return None
 
     def nextTurn(self, passed=False, skipped=False, two=False):
         # get player who played last
@@ -720,7 +725,7 @@ class Client(object):
                 return (messages, True)
 
         if self.recieving_msg: # if we hit the end of the data without finishing a message
-            self.buff += data  # save it's beginning part in a buffer (per client)
+            self.buff = data[start:-1]
 
         return (messages, False)
 
