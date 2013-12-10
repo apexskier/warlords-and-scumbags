@@ -68,38 +68,37 @@ class Server(object):
         sys.exit(0)
 
     def send(self, recipient, msg):
-        client = self.getPlayerFromSocket(recipient)
-        if not client:
-            client = self.getClientFromSocket(recipient)
-        if len(msg.strip()):
-            try:
-                if client:
-                    print COLORS['MUTE'] + '>>>', client.name_ + COLORS['OKBLUE'], msg, COLORS['ENDC']
-                else:
-                    print COLORS['MUTE'] + '>>>         ' + COLORS['ENDC'], msg
-                recipient.send(msg + '\n')
-            except socket.error, e:
-                if client:
-                    print COLORS['FAIL'] + "            Socket error sending message to a client.", client.address
-                else:
-                    print COLORS['FAIL'] + "            Tried sending a message to no one."
-                print e, COLORS['ENDC']
-        else:
-            if client:
-                print COLORS['FAIL'] + "            Tried to send an empty message to a client.", client.address, COLORS['ENDC']
+        if self.running:
+            client = self.getPlayerFromSocket(recipient)
+            if not client:
+                client = self.getClientFromSocket(recipient)
+            if len(msg.strip()):
+                try:
+                    if client:
+                        print COLORS['MUTE'] + '>>>', client.name_ + COLORS['OKBLUE'], msg, COLORS['ENDC']
+                    else:
+                        print COLORS['MUTE'] + '>>>         ' + COLORS['ENDC'], msg
+                    recipient.send(msg + '\n')
+                except socket.error, e:
+                    if client:
+                        print COLORS['FAIL'] + "            Socket error sending message to a client.", client.address, e, COLORS['ENDC']
             else:
-                print COLORS['FAIL'] + "            Tried to send an empty message to no one.", COLORS['ENDC']
+                if client:
+                    print COLORS['FAIL'] + "            Tried to send an empty message to a client.", client.address, COLORS['ENDC']
+                else:
+                    print COLORS['FAIL'] + "            Tried to send an empty message to no one.", COLORS['ENDC']
 
     def sendAll(self, msg):
-        if len(msg.strip()):
-            print COLORS['MUTE'] + "> > --all--", COLORS['ENDC'], msg
-            for o in self.outputs:
-                try:
-                    o.send(msg)
-                except socket.error, e:
-                    print COLORS['FAIL'] + "            Tried sending message to closed socket.", e, COLORS['ENDC']
-        else:
-            print COLORS['FAIL'] + "            Tried to send an empty message to all clients." + COLORS['ENDC']
+        if self.running:
+            if len(msg.strip()):
+                print COLORS['MUTE'] + "> > --all--", COLORS['ENDC'], msg
+                for o in self.outputs:
+                    try:
+                        o.send(msg)
+                    except socket.error, e:
+                        print COLORS['WARNING'] + "            Tried sending message to closed socket.", e, COLORS['ENDC']
+            else:
+                print COLORS['FAIL'] + "            Tried to send an empty message to all clients." + COLORS['ENDC']
 
     def getPlayerFromSocket(self, socket):
         return next((player for player in players if player.valid and socket == player.socket), None)
@@ -157,7 +156,7 @@ class Server(object):
                 print COLORS['FAIL'] + "Select error:", e, COLORS['ENDC']
                 break
             except socket.error, e:
-                print COLORS['FAIL'] + "Select socket error:", e, COLORS['ENDC']
+                print COLORS['WARNING'] + "Reading from disconnected client, ignore.", e, COLORS['ENDC']
                 break
 
             for s in ready_in:
@@ -172,7 +171,7 @@ class Server(object):
                         new_clients.append(client)
                     else:
                         self.send(client_socket, "[strik|81|0]")
-                        print COLORS["WARNING"] + "             Too many clients, disconnecting: " + str(address) + COLORS["ENDC"]
+                        print COLORS["WARNING"] + "             Too many clients, disconnecting " + str(address) + COLORS["ENDC"]
                         client_socket.close()
 
                 elif s == sys.stdin:
@@ -738,7 +737,7 @@ if __name__ == "__main__":
     args = sys.argv
     err_msg = 'Usage: %s [-t play_timeout] [-m minimum_players] [-l lobby_timout]' % args[0] + """\n
     -t : Time to wait for someone to play
-    -m : The minimum amount of players to start a game
+    -m : The minimum amount of players to start a game (min 3)
     -l : Time to wait to start a game once the minimum number of players are available and between hands
 """
     num_args = len(args)
@@ -751,7 +750,7 @@ if __name__ == "__main__":
             else:
                 options['-t'] = int(args[i + 1])
         elif arg == '-m':
-            if len(args) <= i + 1 or args[i + 1] in options.keys() or not args[i + 1].isdigit():
+            if len(args) <= i + 1 or args[i + 1] in options.keys() or not args[i + 1].isdigit() or int(args[i + 1]) < 3:
                 print 'Error for -m'
                 valid = False
             else:
