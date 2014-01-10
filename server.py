@@ -152,100 +152,98 @@ class Server(object):
         while self.running:
             try:
                 ready_in, ready_out, ready_exp = select.select(self.inputs, self.outputs, [])
+                for s in ready_in:
+                    if s == self.socket: # new connection, unknown client
+                        client_socket, address = self.socket.accept()
+                        print "|||          got connection %d from %s" % (client_socket.fileno(), address)
+
+                        if len(lobby) < MAX_CLIENTS: # bring client in
+                            client = Client(client_socket, address)
+                            self.inputs.append(client_socket)
+                            self.outputs.append(client_socket)
+                            new_clients.append(client)
+                        else:
+                            self.send(client_socket, "[strik|81|0]")
+                            print COLORS["WARNING"] + "             Too many clients, disconnecting " + str(address) + COLORS["ENDC"]
+                            client_socket.close()
+
+                    elif s == sys.stdin:
+                        # standard input
+                        junk = sys.stdin.readline()
+                        if junk.startswith("quit"):
+                            running = 0
+                        elif junk.startswith("stabl"):
+                            self.stabl()
+                        elif junk.startswith("chat"):
+                            self.schat("________", junk)
+
+                    else:
+                        # known connection
+                        try:
+                            unknown_client = False
+                            client = next((player for player in players if s == player.socket), None)
+                            if not client:
+                                client = next((client for client in lobby if s == client.socket), None)
+                                if not client:
+                                    client = next((client for client in new_clients if s == client.socket), None)
+                                    unknown_client = True
+                            if client:
+                                data = client.recv(BUFSIZ)
+                                if not data:
+                                    self.disconnectClient(client)
+                                else:
+                                    if client.valid:
+                                        print COLORS['MUTE'] + "<<<", client.name_ + COLORS['ENDC'], data
+                                    else:
+                                        print COLORS['MUTE'] + "<<<         " + COLORS['ENDC'], data
+                                    input_got = client.processInput(data)
+                                    messages = input_got[0]
+                                    errors = input_got[1]
+                                    if errors:
+                                        self.strik(client, 30)
+                                    for message in messages:
+                                        message_match = re.match('\[c(?P<type>[a-zA-Z]{4})\|?(?P<body>.*)\]', message)
+                                        if message_match:
+                                            m_type = message_match.group('type')
+                                            if m_type == "join":
+                                                self.cjoin(client, message_match.group('body'))
+                                            elif client.valid:
+                                                if m_type == "chat":
+                                                    self.cchat(client, message_match.group('body'))
+                                                elif m_type == "play":
+                                                    self.cplay(client, message_match.group('body'))
+                                                elif m_type == "hand":
+                                                    self.shand(client)
+                                                elif m_type == "swap":
+                                                    self.cswap(client, message_match.group('body'))
+                                                else:
+                                                    self.strik(client, 33)
+                                            else:
+                                                print COLORS['WARNING'] + "             Invalid client", COLORS['ENDC']
+                                                self.strik(client, 30)
+                                        else:
+                                            print COLORS['WARNING'] + "             No message match", COLORS['ENDC']
+                                            self.strik(client, 30)
+                            else:
+                                print COLORS['WARNING'] + "             Unknown client messaging", COLORS['ENDC']
+
+                        except socket.error, e:
+                            unknown_client = False
+                            client = next((player for player in players if s == player.socket), None)
+                            if not client:
+                                client = next((client for client in lobby if s == client.socket), None)
+                                if not client:
+                                    client = next((client for client in new_clients if s == client.socket), None)
+                                    unknown_client = True
+                            name = ""
+                            if not unknown_client:
+                                name = client.name
+                            print COLORS['FAIL'] + "             Socket error on known client:", name, e, COLORS['ENDC']
             except select.error, e:
                 print COLORS['FAIL'] + "Select error:", e, COLORS['ENDC']
-                break
             except socket.error, e:
                 print COLORS['WARNING'] + "Reading from disconnected client, ignore.", e, COLORS['ENDC']
-                break
 
-            for s in ready_in:
-                if s == self.socket: # new connection, unknown client
-                    client_socket, address = self.socket.accept()
-                    print "|||          got connection %d from %s" % (client_socket.fileno(), address)
-
-                    if len(lobby) < MAX_CLIENTS: # bring client in
-                        client = Client(client_socket, address)
-                        self.inputs.append(client_socket)
-                        self.outputs.append(client_socket)
-                        new_clients.append(client)
-                    else:
-                        self.send(client_socket, "[strik|81|0]")
-                        print COLORS["WARNING"] + "             Too many clients, disconnecting " + str(address) + COLORS["ENDC"]
-                        client_socket.close()
-
-                elif s == sys.stdin:
-                    # standard input
-                    junk = sys.stdin.readline()
-                    if junk.startswith("quit"):
-                        running = 0
-                    elif junk.startswith("stabl"):
-                        self.stabl()
-                    elif junk.startswith("chat"):
-                        self.schat("________", junk)
-
-                else:
-                    # known connection
-                    try:
-                        unknown_client = False
-                        client = next((player for player in players if s == player.socket), None)
-                        if not client:
-                            client = next((client for client in lobby if s == client.socket), None)
-                            if not client:
-                                client = next((client for client in new_clients if s == client.socket), None)
-                                unknown_client = True
-                        if client:
-                            data = client.recv(BUFSIZ)
-                            if not data:
-                                self.disconnectClient(client)
-                            else:
-                                if client.valid:
-                                    print COLORS['MUTE'] + "<<<", client.name_ + COLORS['ENDC'], data
-                                else:
-                                    print COLORS['MUTE'] + "<<<         " + COLORS['ENDC'], data
-                                input_got = client.processInput(data)
-                                messages = input_got[0]
-                                errors = input_got[1]
-                                if errors:
-                                    self.strik(client, 30)
-                                for message in messages:
-                                    message_match = re.match('\[c(?P<type>[a-zA-Z]{4})\|?(?P<body>.*)\]', message)
-                                    if message_match:
-                                        m_type = message_match.group('type')
-                                        if m_type == "join":
-                                            self.cjoin(client, message_match.group('body'))
-                                        elif client.valid:
-                                            if m_type == "chat":
-                                                self.cchat(client, message_match.group('body'))
-                                            elif m_type == "play":
-                                                self.cplay(client, message_match.group('body'))
-                                            elif m_type == "hand":
-                                                self.shand(client)
-                                            elif m_type == "swap":
-                                                self.cswap(client, message_match.group('body'))
-                                            else:
-                                                self.strik(client, 33)
-                                        else:
-                                            print COLORS['WARNING'] + "             Invalid client", COLORS['ENDC']
-                                            self.strik(client, 30)
-                                    else:
-                                        print COLORS['WARNING'] + "             No message match", COLORS['ENDC']
-                                        self.strik(client, 30)
-                        else:
-                            print COLORS['WARNING'] + "             Unknown client messaging", COLORS['ENDC']
-
-                    except socket.error, e:
-                        unknown_client = False
-                        client = next((player for player in players if s == player.socket), None)
-                        if not client:
-                            client = next((client for client in lobby if s == client.socket), None)
-                            if not client:
-                                client = next((client for client in new_clients if s == client.socket), None)
-                                unknown_client = True
-                        name = ""
-                        if not unknown_client:
-                            name = client.name
-                        print COLORS['FAIL'] + "             Socket error on known client:", name, e, COLORS['ENDC']
 
         self.shutDown()
 
